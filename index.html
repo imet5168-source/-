@@ -1153,9 +1153,8 @@ function getBudgetData(yr, q){
   const baseKey = yr+'_'+q;
   const baseVal = BASE_TABLE[baseKey];
 
-  // 嘗試讀取院長報告卡（localStorage）
-  let rpt = null;
-  try{ const rpts=JSON.parse(localStorage.getItem('smh_reports')||'{}'); rpt=rpts[baseKey]||null; }catch(e){}
+  // 讀取院長報告卡（localStorage 優先，其次內建）
+  let rpt = getReport(yr, q);
 
   const rows = TREND_HISTORY.filter(r=>r.yr===yr && r.q===q);
   if(!rows.length && !rpt) return { base:null, actual:null, remain:null, effort:null,
@@ -1568,11 +1567,39 @@ function applyBaseInput(){
 }
 
 // 從 localStorage 載入已儲存的基期
+// ── 內建院長報告卡資料（直接寫入程式碼，不依賴localStorage）──
+const BUILTIN_REPORTS = {
+  '2026_Q1': {
+    year:2026, quarter:'Q1',
+    base_pts:374143686, nhis_actual_pts:391320341,
+    total_claim_pts:462270186, total_deduct:14248824,
+    deduct_rate:3.08, quality_bonus:514636,
+    final_payment:379581861, stage:'1階', stageN:1,
+  },
+  '2026_Q2': {
+    year:2026, quarter:'Q2',
+    base_pts:398222764, nhis_actual_pts:425463721,
+    total_claim_pts:477537027, total_deduct:5852841,
+    deduct_rate:1.23, quality_bonus:504147,
+    final_payment:419610880, stage:'2階', stageN:2,
+  },
+};
+
 function loadSavedBases(){
   try{
     const saved = JSON.parse(localStorage.getItem('smh_base_table')||'{}');
     Object.entries(saved).forEach(([k,v])=>{ if(v) BASE_TABLE[k]=v; });
   }catch(e){}
+}
+
+function getReport(yr, q){
+  const key = yr+'_'+q;
+  // 優先用 localStorage（最新上傳），其次用內建值
+  try{
+    const saved = JSON.parse(localStorage.getItem('smh_reports')||'{}');
+    if(saved[key]) return saved[key];
+  }catch(e){}
+  return BUILTIN_REPORTS[key] || null;
 }
 
 function renderBudget(){
@@ -1772,10 +1799,9 @@ function renderStructPanel(selYr, q, d){
   var opRateEl = document.getElementById('op-rate');
   if(opRateEl) opRateEl.textContent = opRate.toFixed(2)+'%';
 
-  // 醫療收入試算：優先使用院長報告卡資料，其次用 DEMO_BUDGET
+  // 醫療收入試算：優先 localStorage，其次內建資料
   var reportKey = selYr+'_'+q;
-  var rpt = null;
-  try{ var reports=JSON.parse(localStorage.getItem('smh_reports')||'{}'); rpt=reports[reportKey]||null; }catch(e){}
+  var rpt = getReport(selYr, q);
 
   // 從院長報告卡取值（含完整欄位）
   var totalPts   = (rpt && rpt.actual_pts)   ? parseFloat(rpt.actual_pts)   : (totPts*1e6);
