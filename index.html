@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<base target="_top">
 <title>小總額共管 BI 儀表板｜羅東聖母醫院</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous"></script>
@@ -771,6 +772,22 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
       <div style="font-size:9px;color:var(--text3);margin-top:4px">Key 僅儲存於本機 localStorage，不會上傳至任何伺服器。</div>
     </div>
 
+    <!-- GitHub Token 輸入 -->
+    <div class="modal-section">
+      <div class="modal-section-title">GitHub 同步設定 <span style="font-size:9px;font-weight:400;color:var(--green)">（套用後自動同步，所有人立即看到更新）</span></div>
+      <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+        <input type="password" id="github-token" placeholder="ghp_..." style="flex:1;height:32px;border:1px solid var(--border2);border-radius:6px;padding:0 10px;font-size:12px;font-family:monospace">
+        <button class="btn btn-secondary" onclick="saveGithubToken()" style="height:32px;font-size:11px">儲存</button>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="github-repo" placeholder="imet5168-source/-" style="flex:1;height:28px;border:1px solid var(--border2);border-radius:6px;padding:0 8px;font-size:11px">
+        <span style="font-size:10px;color:var(--text3);white-space:nowrap">repo 名稱</span>
+        <input type="text" id="github-file" placeholder="index.html" style="width:100px;height:28px;border:1px solid var(--border2);border-radius:6px;padding:0 8px;font-size:11px">
+        <span style="font-size:10px;color:var(--text3);white-space:nowrap">檔案名稱</span>
+      </div>
+      <div style="font-size:9px;color:var(--text3);margin-top:4px">Token 僅儲存於本機 localStorage。repo 格式：帳號/repository名稱</div>
+    </div>
+
     <!-- PDF 上傳區 -->
     <div class="modal-section">
       <div class="modal-section-title">選擇院長報告卡 PDF</div>
@@ -809,7 +826,8 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
     <!-- 固定在底部的操作列 -->
     <div class="modal-actions" style="flex-shrink:0;border-top:1px solid var(--border);margin-top:0;padding-top:14px">
       <button class="btn btn-secondary" onclick="closeReportModal()">取消</button>
-      <button class="btn btn-primary" id="report-confirm-btn" onclick="confirmReportData()" disabled style="background:var(--teal);border-color:var(--teal)">✓ 套用至系統</button>
+      <button class="btn btn-secondary" id="report-local-btn" onclick="confirmReportData(false)" disabled>✓ 僅套用本機</button>
+      <button class="btn btn-primary" id="report-confirm-btn" onclick="confirmReportData(true)" disabled style="background:var(--teal);border-color:var(--teal)">✓ 套用並同步 GitHub</button>
     </div>
   </div>
 </div>
@@ -1215,6 +1233,7 @@ function showReportModal(){
   // 載入已儲存的 API key
   const savedKey = localStorage.getItem('smh_api_key')||'';
   document.getElementById('report-api-key').value = savedKey;
+  loadGithubSettings();
   document.getElementById('report-progress').style.display='none';
   document.getElementById('report-result').style.display='none';
   document.getElementById('report-confirm-btn').disabled=true;
@@ -1389,7 +1408,141 @@ function showReportResult(d){
   });
 }
 
-function confirmReportData(){
+
+// ═══════════════════════════════════════
+// GitHub 同步功能
+// ═══════════════════════════════════════
+function saveGithubToken(){
+  const token = document.getElementById('github-token').value.trim();
+  const repo  = document.getElementById('github-repo').value.trim();
+  const file  = document.getElementById('github-file').value.trim() || 'index.html';
+  if(!token.startsWith('ghp_') && !token.startsWith('github_pat_')){
+    alert('請輸入有效的 GitHub Token（ghp_ 開頭）'); return;
+  }
+  if(!repo.includes('/')){
+    alert('repo 格式錯誤，請輸入「帳號/repository名稱」，例如：imet5168-source/-'); return;
+  }
+  localStorage.setItem('smh_github_token', token);
+  localStorage.setItem('smh_github_repo',  repo);
+  localStorage.setItem('smh_github_file',  file);
+  alert('✓ GitHub 設定已儲存');
+}
+
+function loadGithubSettings(){
+  const token = localStorage.getItem('smh_github_token')||'';
+  const repo  = localStorage.getItem('smh_github_repo') ||'imet5168-source/-';
+  const file  = localStorage.getItem('smh_github_file') ||'index.html';
+  const tEl = document.getElementById('github-token');
+  const rEl = document.getElementById('github-repo');
+  const fEl = document.getElementById('github-file');
+  if(tEl) tEl.value = token ? '••••••••••••••••••••' : '';
+  if(rEl) rEl.value = repo;
+  if(fEl) fEl.value = file;
+}
+
+async function syncToGithub(reportData){
+  const token = localStorage.getItem('smh_github_token')||'';
+  const repo  = localStorage.getItem('smh_github_repo')||'';
+  const file  = localStorage.getItem('smh_github_file')||'index.html';
+
+  if(!token){ alert('請先輸入 GitHub Token'); return false; }
+  if(!repo) { alert('請先輸入 repo 名稱'); return false; }
+
+  // 更新 BUILTIN_REPORTS 並產生新 HTML
+  const newHtml = buildUpdatedHtml(reportData);
+  if(!newHtml){ alert('產生 HTML 失敗'); return false; }
+
+  // 取得目前檔案的 SHA（GitHub API 更新需要）
+  const statusEl = document.createElement('div');
+  statusEl.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1B3A6B;color:#fff;padding:20px 30px;border-radius:10px;font-size:14px;z-index:9999;text-align:center';
+  statusEl.innerHTML = '⏳ 正在同步到 GitHub...';
+  document.body.appendChild(statusEl);
+
+  try{
+    // 1. 取得目前檔案 SHA
+    const getResp = await fetch(`https://api.github.com/repos/${repo}/contents/${file}`,{
+      headers:{
+        'Authorization': 'token '+token,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    });
+    if(!getResp.ok){
+      const err = await getResp.json();
+      throw new Error('取得檔案失敗：'+( err.message||getResp.status));
+    }
+    const fileInfo = await getResp.json();
+    const sha = fileInfo.sha;
+
+    statusEl.innerHTML = '⏳ 上傳新版本中...';
+
+    // 2. 更新檔案
+    const content = btoa(unescape(encodeURIComponent(newHtml)));
+    const putResp = await fetch(`https://api.github.com/repos/${repo}/contents/${file}`,{
+      method: 'PUT',
+      headers:{
+        'Authorization': 'token '+token,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        message: '更新院長報告卡資料 '+new Date().toLocaleDateString('zh-TW'),
+        content: content,
+        sha: sha,
+      })
+    });
+
+    if(!putResp.ok){
+      const err = await putResp.json();
+      throw new Error('上傳失敗：'+(err.message||putResp.status));
+    }
+
+    document.body.removeChild(statusEl);
+    alert('✓ 已同步到 GitHub！\n約 30 秒後所有人開啟連結即可看到更新。');
+    return true;
+
+  }catch(e){
+    document.body.removeChild(statusEl);
+    alert('❌ 同步失敗：'+e.message+'\n\n請確認：\n1. Token 是否正確\n2. repo 名稱格式（帳號/repo）\n3. Token 有 repo 權限');
+    return false;
+  }
+}
+
+function buildUpdatedHtml(d){
+  // 取得目前頁面的 HTML，更新 BUILTIN_REPORTS 中對應的資料
+  const yr = parseInt(d.year) + 1911;
+  const q  = d.quarter;
+  const key = yr+'_'+q;
+
+  // 取得目前 HTML（透過 document）
+  const html = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+
+  // 找到 BUILTIN_REPORTS 並更新
+  const newEntry = `  '${key}': {\n`
+    +`    year:${d.year}, quarter:'${q}',\n`
+    +`    base_pts:${d.base_pts||'null'}, nhis_actual_pts:${d.nhis_actual_pts||'null'},\n`
+    +`    total_claim_pts:${d.total_claim_pts||'null'}, total_deduct:${d.total_deduct||'null'},\n`
+    +`    deduct_rate:${d.deduct_rate||'null'}, quality_bonus:${d.quality_bonus||'null'},\n`
+    +`    final_payment:${d.final_payment||'null'},\n`
+    +`    guaranteed_positive:${d.guaranteed_positive||'null'},\n`
+    +`    stage:'${d.stage||'—'}', stageN:${d.stageN||0},\n`
+    +`  }`;
+
+  // 若 key 已存在則替換，否則插入
+  const existRe = new RegExp(`\\s*'${key}':\s*\{[^}]+\},?`,'g');
+  let updated;
+  if(existRe.test(html)){
+    updated = html.replace(existRe, '\n  '+newEntry+',');
+  } else {
+    // 插在 BUILTIN_REPORTS 的最後一個 } 前
+    updated = html.replace(
+      /(const BUILTIN_REPORTS = \{[\s\S]*?)(\};)/,
+      '$1  '+newEntry+',\n$2'
+    );
+  }
+  return updated;
+}
+
+function confirmReportData(doSync){
   if(!parsedReportData){ alert('請先上傳並解析報告卡'); return; }
   var d = parsedReportData;
 
@@ -1453,6 +1606,12 @@ function confirmReportData(){
     localStorage.setItem('smh_reports', JSON.stringify(reports));
   }catch(e){ console.warn('localStorage 儲存失敗:', e); }
 
+  if(doSync){
+    syncToGithub({...parsedReportData,
+      base_pts: parsedReportData.base_pts,
+      nhis_actual_pts: parsedReportData.nhis_actual_pts,
+    });
+  }
   closeReportModal();
   refreshAllPages();
 
@@ -1582,6 +1741,15 @@ const BUILTIN_REPORTS = {
     total_claim_pts:477537027, total_deduct:5852841,
     deduct_rate:1.23, quality_bonus:504147,
     final_payment:419610880, stage:'2階', stageN:2,
+  },
+  '2025_Q2': {
+    year:2025, quarter:'Q2',
+    base_pts:398222764, nhis_actual_pts:425463721,
+    total_claim_pts:477537027, total_deduct:5852841,
+    deduct_rate:1.23, quality_bonus:504147,
+    final_payment:419610880,
+    guaranteed_positive:4437689,
+    stage:'2階', stageN:2,
   },
 };
 
@@ -2958,11 +3126,16 @@ function setupIpdKpi(){
 // ═══════════════════════════════════════
 // 初始化
 // ═══════════════════════════════════════
-window.addEventListener('DOMContentLoaded',()=>{
+window.addEventListener('load',function(){
   try {
     loadSavedBases();
     updateAllHeaders();
-    renderBudget();
+    // 確認 Chart.js 已載入
+    if(typeof Chart === 'undefined'){
+      setTimeout(function(){ renderBudget(); }, 1000);
+    } else {
+      renderBudget();
+    }
   } catch(e) {
     console.error('[BI Init Error]', e);
     var msg = document.createElement('div');
