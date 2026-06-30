@@ -835,26 +835,44 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 
 <!-- ════ 基期設定 Modal ════ -->
 <div class="modal-overlay" id="base-modal-overlay" onclick="if(event.target===this)closeBaseModal()">
-  <div class="modal" style="width:520px">
-    <div class="modal-title">📋 小總額基期設定</div>
+  <div class="modal" style="width:520px;max-height:90vh;display:flex;flex-direction:column">
+    <div class="modal-title" style="flex-shrink:0">📋 小總額基期設定</div>
     <div class="modal-sub">
       輸入健保局核定的各年季 <b>基期(0階)點數</b>（百萬點）。<br>
       115年已內建精確值，其他年度請從<b>院長報告卡</b>或<b>分區共管預估費用表</b>查詢。<br>
       儲存後自動套用，下次開啟自動載入。
     </div>
+    <!-- 新增季別操作區（116年起可擴充）-->
+    <div style="flex-shrink:0;display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border);margin-bottom:8px">
+      <span style="font-size:11px;font-weight:700;color:var(--text2)">➕ 新增季別</span>
+      <select id="new-quarter-yr" style="height:28px;border:1px solid var(--border2);border-radius:5px;padding:0 8px;font-size:11px">
+        <option value="2027">民國116年</option>
+        <option value="2028">民國117年</option>
+        <option value="2029">民國118年</option>
+      </select>
+      <select id="new-quarter-q" style="height:28px;border:1px solid var(--border2);border-radius:5px;padding:0 8px;font-size:11px">
+        <option value="Q1">Q1</option><option value="Q2">Q2</option>
+        <option value="Q3">Q3</option><option value="Q4">Q4</option>
+      </select>
+      <button onclick="addExtraQuarter()" class="btn btn-secondary" style="height:28px;font-size:11px">新增</button>
+    </div>
+
+    <div style="overflow-y:auto;flex:1;padding-right:4px">
     <table style="width:100%;border-collapse:collapse;font-size:12px">
       <thead>
         <tr style="background:var(--surface2)">
           <th style="padding:8px 10px;text-align:left;border-bottom:2px solid var(--border)">年季</th>
           <th style="padding:8px 10px;text-align:center;border-bottom:2px solid var(--border)">基期(0階)<br><span style="font-size:9px;font-weight:400;color:var(--text3)">百萬點</span></th>
           <th style="padding:8px 10px;text-align:center;border-bottom:2px solid var(--border)">資料來源</th>
+          <th style="padding:8px 10px;text-align:center;border-bottom:2px solid var(--border);width:30px"></th>
         </tr>
       </thead>
       <tbody id="base-table-tbody"></tbody>
     </table>
-    <div class="modal-actions">
+    </div><!-- /scroll區 -->
+    <div class="modal-actions" style="flex-shrink:0;border-top:1px solid var(--border);margin-top:0;padding-top:14px">
       <button class="btn btn-secondary" onclick="closeBaseModal()">取消</button>
-      <button class="btn btn-primary" onclick="saveBaseTable()">儲存並套用</button>
+      <button class="btn btn-primary" onclick="saveBaseTable()">✓ 儲存並套用</button>
     </div>
   </div>
 </div>
@@ -1622,28 +1640,26 @@ function confirmReportData(doSync){
 
 
 function showBaseModal(){
-  // 動態產生表格列（按年季順序）
   const tbody = document.getElementById('base-table-tbody');
   tbody.innerHTML = '';
 
-  const rows = [
+  // 小總額自114年Q2起實施，故僅列114Q2以後的季別
+  // 115Q4以後可透過「新增季別」按鈕擴充
+  const fixedRows = [
     {yr:2026,q:'Q1',label:'民國115年 Q1',src:'PDF核定',locked:true},
     {yr:2026,q:'Q2',label:'民國115年 Q2',src:'PDF核定',locked:true},
     {yr:2026,q:'Q3',label:'民國115年 Q3',src:'估算值',locked:false},
     {yr:2026,q:'Q4',label:'民國115年 Q4',src:'估算值',locked:false},
-    {yr:2025,q:'Q1',label:'民國114年 Q1',src:'請輸入',locked:false},
-    {yr:2025,q:'Q2',label:'民國114年 Q2',src:'請輸入',locked:false},
+    {yr:2025,q:'Q2',label:'民國114年 Q2',src:'院長報告卡',locked:false},
     {yr:2025,q:'Q3',label:'民國114年 Q3',src:'請輸入',locked:false},
     {yr:2025,q:'Q4',label:'民國114年 Q4',src:'請輸入',locked:false},
-    {yr:2024,q:'Q1',label:'民國113年 Q1',src:'請輸入',locked:false},
-    {yr:2024,q:'Q2',label:'民國113年 Q2',src:'請輸入',locked:false},
-    {yr:2024,q:'Q3',label:'民國113年 Q3',src:'請輸入',locked:false},
-    {yr:2024,q:'Q4',label:'民國113年 Q4',src:'請輸入',locked:false},
-    {yr:2023,q:'Q1',label:'民國112年 Q1',src:'請輸入',locked:false},
-    {yr:2023,q:'Q2',label:'民國112年 Q2',src:'請輸入',locked:false},
-    {yr:2023,q:'Q3',label:'民國112年 Q3',src:'請輸入',locked:false},
-    {yr:2023,q:'Q4',label:'民國112年 Q4',src:'請輸入',locked:false},
   ];
+
+  // 從 localStorage 讀取使用者額外新增的季別（116年起）
+  let extraRows = [];
+  try{ extraRows = JSON.parse(localStorage.getItem('smh_extra_quarters')||'[]'); }catch(e){}
+
+  const rows = [...fixedRows, ...extraRows];
 
   rows.forEach(r=>{
     const key   = r.yr+'_'+r.q;
@@ -1662,6 +1678,9 @@ function showBaseModal(){
         }
       </td>
       <td style="padding:7px 10px;text-align:center;font-size:10px;color:var(--text3)">${r.src}</td>
+      <td style="padding:7px 10px;text-align:center">
+        ${r.removable ? `<button onclick="removeExtraQuarter('${key}')" style="border:none;background:none;color:var(--red);cursor:pointer;font-size:14px" title="移除此季">✕</button>` : ''}
+      </td>
     `;
     tbody.appendChild(tr);
   });
@@ -1669,16 +1688,45 @@ function showBaseModal(){
   document.getElementById('base-modal-overlay').classList.add('show');
 }
 
+function addExtraQuarter(){
+  const yrInput = document.getElementById('new-quarter-yr').value;
+  const qInput  = document.getElementById('new-quarter-q').value;
+  if(!yrInput){ alert('請輸入年度'); return; }
+  const yr = parseInt(yrInput);
+  const twYr = yr - 1911;
+
+  let extraRows = [];
+  try{ extraRows = JSON.parse(localStorage.getItem('smh_extra_quarters')||'[]'); }catch(e){}
+
+  const key = yr+'_'+qInput;
+  if(extraRows.some(r=>r.yr+'_'+r.q===key)){ alert('此季別已存在'); return; }
+
+  extraRows.push({yr, q:qInput, label:'民國'+twYr+'年 '+qInput, src:'請輸入', locked:false, removable:true});
+  localStorage.setItem('smh_extra_quarters', JSON.stringify(extraRows));
+  showBaseModal(); // 重新渲染
+}
+
+function removeExtraQuarter(key){
+  if(!confirm('確定要移除此季別設定？')) return;
+  let extraRows = [];
+  try{ extraRows = JSON.parse(localStorage.getItem('smh_extra_quarters')||'[]'); }catch(e){}
+  extraRows = extraRows.filter(r => (r.yr+'_'+r.q) !== key);
+  localStorage.setItem('smh_extra_quarters', JSON.stringify(extraRows));
+  delete BASE_TABLE[key];
+  showBaseModal();
+}
+
 function closeBaseModal(){
   document.getElementById('base-modal-overlay').classList.remove('show');
 }
 
 function saveBaseTable(){
+  let extraRows = [];
+  try{ extraRows = JSON.parse(localStorage.getItem('smh_extra_quarters')||'[]'); }catch(e){}
   const rows = [
     {yr:2026,q:'Q3'},{yr:2026,q:'Q4'},
-    {yr:2025,q:'Q1'},{yr:2025,q:'Q2'},{yr:2025,q:'Q3'},{yr:2025,q:'Q4'},
-    {yr:2024,q:'Q1'},{yr:2024,q:'Q2'},{yr:2024,q:'Q3'},{yr:2024,q:'Q4'},
-    {yr:2023,q:'Q1'},{yr:2023,q:'Q2'},{yr:2023,q:'Q3'},{yr:2023,q:'Q4'},
+    {yr:2025,q:'Q2'},{yr:2025,q:'Q3'},{yr:2025,q:'Q4'},
+    ...extraRows,
   ];
   let saved = 0;
   rows.forEach(r=>{
