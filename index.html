@@ -1098,11 +1098,10 @@ const STAGE_TABLE = {
 
 
 // 115年精確值（PDF核定）
+// 注意：僅 Q1/Q2 為 PDF 核定精確值，Q3/Q4 一律走動態預估（依 BASE_TABLE + NHIS_MONTHLY 計算）
 const DEMO_BUDGET={
   Q1:{base:374.144,actual:391.320,remain:+17.176,effort:20.58,opGr:3.67,ipGr:-12.22,yoy:-8.54,stage:'1階',stageN:1,opRate:54.25},
   Q2:{base:398.22,actual:359.61,remain:-38.61,effort:21.90,opGr:-21.64,ipGr:-29.91,yoy:-51.55,stage:'未達基期',stageN:0,opRate:56.18},
-  Q3:{base:402.50,actual:415.69,remain:-13.19,effort:22.14,opGr:6.53,ipGr:-1.58,yoy:13.92,stage:'1階',stageN:1,opRate:55.28},
-  Q4:{base:398.10,actual:399.65,remain:-1.55,effort:21.90,opGr:-0.18,ipGr:-9.68,yoy:-0.03,stage:'1階',stageN:1,opRate:55.65},
 };
 // ── 同儕比較資料（本院 vs 臺北區域醫院同儕）──
 // 本院：從 Excel 計算；同儕：來自健保院長報告卡（固定）
@@ -1820,10 +1819,12 @@ function getReport(yr, q){
 
 function renderBudget(){
   const selYr=getGlobalYr();
-  const q=getGlobalQ()||'Q2';
+  const qRaw=getGlobalQ();
+  const q=qRaw||'Q1';  // 全部季時，KPI卡預設顯示Q1（避免誤判為固定Q2）
   const d=getBudgetData(selYr,q);
+  const allQNote = !qRaw ? '<span style="color:var(--amber);font-size:10px;margin-left:8px">⚠ 已選「全部季」，下方KPI卡顯示Q1資料，請選特定季查看其他季</span>' : '';
   setPageStatus('bgt-status-bar',
-    d.noBase ? '<span id="bgt-base-hint" style="display:inline-flex;align-items:center;gap:8px;margin-left:8px"><span style="color:var(--amber);font-weight:700">⚠ '+tw(selYr)+'年'+q+' 基期未設定</span><span style="font-size:10px;color:var(--text3)">輸入健保局核定基期：</span><input type="number" id="bgt-base-input" step="0.01" placeholder="百萬點" style="width:80px;height:22px;border:1.5px solid var(--amber-m);border-radius:5px;padding:0 6px;font-size:11px"><button onclick="applyBaseInput()" style="height:22px;padding:0 8px;background:var(--amber);color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">套用</button></span>' : ''
+    allQNote + (d.noBase ? '<span id="bgt-base-hint" style="display:inline-flex;align-items:center;gap:8px;margin-left:8px"><span style="color:var(--amber);font-weight:700">⚠ '+tw(selYr)+'年'+q+' 基期未設定</span><span style="font-size:10px;color:var(--text3)">輸入健保局核定基期：</span><input type="number" id="bgt-base-input" step="0.01" placeholder="百萬點" style="width:80px;height:22px;border:1.5px solid var(--amber-m);border-radius:5px;padding:0 6px;font-size:11px"><button onclick="applyBaseInput()" style="height:22px;padding:0 8px;background:var(--amber);color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">套用</button></span>' : '')
   );
   const _bgtInfo=document.getElementById('bgt-info');if(_bgtInfo)_bgtInfo.textContent=`顯示：民國${tw(selYr)}年 ${q} 全季資料`;
   document.getElementById('kpi-base').textContent = d.base!=null ? d.base.toFixed(2)+'M' : '未設定';
