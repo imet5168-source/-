@@ -213,8 +213,8 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
     </div>
   </div>
   <div style="display:flex;gap:8px;align-items:center">
-    <span class="badge b-blue"><span class="dot-live"></span><span id="hdr-period">民國115年 Q2</span></span>
-    <span class="badge b-red" id="hdr-alert">⚠ 未達基期</span>
+    <span class="badge b-blue"><span class="dot-live"></span><span id="hdr-period">民國115年 Q3</span></span>
+    <span class="badge b-red" id="hdr-alert">⚠ 住院衰退 -100.0%</span>
     <button class="btn btn-secondary" onclick="showReportModal()" style="height:28px;font-size:11px;border-color:var(--teal);color:var(--teal)" title="上傳院長報告卡PDF，AI自動解析基期及核減資料">
       📄 院長報告卡
     </button>
@@ -260,7 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
       <option value="Q3">Q3</option>
       <option value="Q4">Q4</option>
     </select>
-    <div id="global-filter-badge" style="height: 30px; display: inline-flex; align-items: center; padding: 0px 12px; background: var(--blue); color: rgb(255, 255, 255); border-radius: 7px; font-size: 11px; font-weight: 700; white-space: nowrap;">民國115年 Q2</div>
+    <div id="global-filter-badge" style="height: 30px; display: inline-flex; align-items: center; padding: 0px 12px; background: var(--blue); color: rgb(255, 255, 255); border-radius: 7px; font-size: 11px; font-weight: 700; white-space: nowrap;">民國115年 Q3</div>
   </div>
 </div>
 <!-- ── Nav ── -->
@@ -281,13 +281,13 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 <div id="page-budget" class="page active">
 
   <!-- 季別篩選 -->
-  <div id="bgt-status-bar" class="page-filter-status"><span class="pfs-label">目前查詢：</span><span class="pfs-tag">民國115年</span><span class="pfs-tag">Q2</span></div>
+  <div id="bgt-status-bar" class="page-filter-status"><span class="pfs-label">目前查詢：</span><span class="pfs-tag">民國115年</span><span class="pfs-tag">Q3</span></div>
 
   <!-- KPI Row -->
   <div class="g5">
     <div class="kpi kpi-blue">
       <div class="kpi-lbl">基期(0階)</div>
-      <div class="kpi-val" id="kpi-base" style="color: var(--text3);">—</div>
+      <div class="kpi-val" id="kpi-base">398.40M</div>
       <div class="kpi-sub" id="kpi-base-sub">百萬點</div>
     </div>
     <div class="kpi kpi-teal">
@@ -298,17 +298,17 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
     <div class="kpi kpi-amber">
       <div class="kpi-lbl">剩餘基期額度</div>
       <div class="kpi-val" id="kpi-remain">—</div>
-      <div class="kpi-sub" id="kpi-remain-sub"><span style="color:var(--text3)">待上傳報告卡</span></div>
+      <div class="kpi-sub" id="kpi-remain-sub"><span style="color:var(--text3)">基期未設定</span></div>
     </div>
     <div class="kpi kpi-green">
       <div class="kpi-lbl">5.5%成長額度（努力空間）</div>
-      <div class="kpi-val" id="kpi-effort">—</div>
+      <div class="kpi-val" id="kpi-effort">21.91M</div>
       <div class="kpi-sub" id="kpi-effort-sub">努力空間 —</div>
     </div>
     <div class="kpi kpi-purple">
       <div class="kpi-lbl">預估落點</div>
-      <div class="kpi-val" id="kpi-stage" style="color: var(--text3);">待報告卡</div>
-      <div class="kpi-sub" id="kpi-stage-sub">尚未上傳院長報告卡</div>
+      <div class="kpi-val" id="kpi-stage" style="color: var(--text);">待確認</div>
+      <div class="kpi-sub" id="kpi-stage-sub">請設定基期</div>
     </div>
   </div>
 
@@ -316,7 +316,20 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
     <!-- 超額分階可視化 -->
     <div class="card">
       <div class="card-title">超額分階狀態</div>
-      <div id="stage-viz"><div style="padding:24px 12px;text-align:center;color:var(--text3);font-size:12px">尚未上傳院長報告卡，暫不呈現超額分階狀態。<br>上傳該年季院長報告卡後即會顯示。</div></div>
+      <div id="stage-viz"><div class="stage-wrap"><div style="position:relative">
+    <div class="stage-row">
+      <div class="stage-seg" style="flex:82.98063785116805;background:#dbeafe;color:#1d4ed8">0階 基期 398.4M</div>
+      <div class="stage-seg" style="flex:4.563935081814239;background:#bbf7d0;color:#14532d">+5.5% 1階</div>
+      <div class="stage-seg" style="flex:2.074515946279209;background:#fde68a;color:#92400e">+8% 2階</div>
+      <div class="stage-seg" style="flex:4;background:#fecaca;color:#991b1b">+11%</div>
+      <div class="stage-seg" style="flex:3;background:#e9d5ff;color:#4c1d95">&gt;15%</div>
+    </div>
+    
+  </div>
+  <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px">
+    <span>基期 398.4M</span><span>1階 420.3M</span>
+    <span>2階 430.3M</span><span>3階 442.2M</span><span>&gt;15%</span>
+  </div><div style="text-align:center;font-size:10px;color:var(--text3);margin-top:6px">（尚無實際點數，僅顯示基期門檻）</div></div></div>
 
       <!-- 當季預估進度（有部分月份資料時顯示）-->
       <div id="est-progress-block" style="display:none;margin-top:12px;padding:10px 12px;background:var(--amber-l);border:1px solid var(--amber-m);border-radius:8px">
@@ -356,8 +369,8 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 
       <div style="margin-top:14px">
         <table class="tbl" id="bgt-kpi-table">
-          <thead id="bgt-kpi-thead"><tr><th style="text-align:left">指標（民國115年）</th><th>Q2</th></tr></thead>
-          <tbody id="bgt-kpi-tbody"><tr><td class="left">基期(0階)</td><td class="num" style="">—</td></tr><tr><td class="left">實際/預估點數</td><td class="num" style="">—</td></tr><tr><td class="left">剩餘基期</td><td class="num" style="">—</td></tr><tr><td class="left">5.5%成長額度</td><td class="num" style="">—</td></tr><tr><td class="left">門診成長點數</td><td class="num" style="color:var(--red);font-weight:700">-21.64M</td></tr><tr><td class="left">住院成長點數</td><td class="num" style="color:var(--red);font-weight:700">-29.91M</td></tr><tr><td class="left">去年成長點數</td><td class="num" style="color:var(--red);font-weight:700">-51.55M</td></tr><tr><td class="left" style="font-weight:700">預估落點</td><td class="num hi" style="">—</td></tr></tbody>
+          <thead id="bgt-kpi-thead"><tr><th style="text-align:left">指標（民國115年）</th><th>Q3</th></tr></thead>
+          <tbody id="bgt-kpi-tbody"><tr><td class="left">基期(0階)</td><td class="num" style="">398.40M</td></tr><tr><td class="left">實際/預估點數</td><td class="num" style="">—</td></tr><tr><td class="left">剩餘基期</td><td class="num" style="">—</td></tr><tr><td class="left">5.5%成長額度</td><td class="num" style="color:var(--green);font-weight:700">21.91M</td></tr><tr><td class="left">門診成長點數</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left">住院成長點數</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left">去年成長點數</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left" style="font-weight:700">預估落點</td><td class="num hi" style="color:var(--text3);font-weight:700">待確認</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -375,32 +388,32 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 
   <!-- 門住診結構 -->
   <div class="card mb14">
-    <div class="card-title" id="struct-title">民國115年 Q2 醫療費用結構</div>
+    <div class="card-title" id="struct-title">民國115年 Q3 醫療費用結構</div>
     <div class="g3">
       <!-- 左：門住診拆分 -->
       <div>
         <div style="font-size:11px;color:var(--text2);margin-bottom:8px">一般服務門住診拆分</div>
         <div style="display:flex;gap:3px;height:20px;border-radius:5px;overflow:hidden;margin-bottom:6px" id="split-bar">
-          <div id="split-op" style="flex: 56 1 0%; background: rgb(37, 99, 235); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">門診 56.2%</div>
-          <div id="split-ip" style="flex: 44 1 0%; background: rgb(220, 38, 38); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">住院 43.8%</div>
+          <div id="split-op" style="flex: 55 1 0%; background: rgb(37, 99, 235); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">門診 55.0%</div>
+          <div id="split-ip" style="flex: 45 1 0%; background: rgb(220, 38, 38); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">住院 45.0%</div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2)">
-          <span>門診 <span id="struct-op-pts">202.0M</span> <span id="struct-op-gr" class="dn">-9.7%</span></span>
-          <span>住院 <span id="struct-ip-pts">157.6M</span> <span id="struct-ip-gr" class="dn">-15.9%</span></span>
+          <span>門診 <span id="struct-op-pts">—</span> <span id="struct-op-gr" class="dn">-100.0%</span></span>
+          <span>住院 <span id="struct-ip-pts">—</span> <span id="struct-ip-gr" class="dn">-100.0%</span></span>
         </div>
         <div style="margin-top:12px;font-size:11px;color:var(--text2)">門診占率</div>
-        <div style="font-size:24px;font-weight:700;color:var(--blue)" id="op-rate">56.18%</div>
+        <div style="font-size:24px;font-weight:700;color:var(--blue)" id="op-rate">55.00%</div>
       </div>
       <!-- 中：來源圓餅圖 -->
       <div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="src-chart-title">115年Q2 各來源收入組成</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="src-chart-title">115年Q3 各來源收入組成</div>
         <div class="chart-box" style="height:110px">
           <canvas id="srcChart" role="img" aria-label="各來源收入圓餅圖" style="box-sizing: border-box; display: block; height: 110px; width: 444px;" width="444" height="110"></canvas>
         </div>
       </div>
       <!-- 右：醫療收入試算（來自院長報告卡）-->
       <div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="income-calc-title">115年Q2 醫療收入試算</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="income-calc-title">115年Q3 醫療收入試算</div>
         <table style="width:100%;font-size:11px;border-collapse:collapse" id="income-calc">
           <tbody><tr><td style="padding:3px 0;color:var(--text3)">總申報點數</td><td style="text-align:right" id="ic-total-pts">—</td></tr>
           <tr><td style="padding:3px 0;color:var(--red)">總核減點數</td><td style="text-align:right;color:var(--red)" id="ic-deduct">—</td></tr>
@@ -423,7 +436,7 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
   <!-- 自費收入分項 -->
   <div class="card mb14" id="sf-card">
     <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
-      <span id="sf-card-title">民國115年 Q2 自費收入明細</span>
+      <span id="sf-card-title">民國115年 Q3 自費收入明細</span>
       <div style="display:flex;gap:6px;align-items:center">
         <span style="font-size:10px;color:var(--text3)">顯示前</span>
         <select id="sf-top-n" onchange="renderSfBlock()" style="height:22px;border:1px solid var(--border2);border-radius:5px;padding:0 6px;font-size:11px;background:var(--surface);font-family:inherit">
@@ -440,16 +453,16 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
         <div style="display:flex;gap:10px;margin-bottom:12px">
           <div style="flex:1;background:var(--teal-l);border:1px solid #99f6e4;border-radius:8px;padding:10px 12px">
             <div style="font-size:10px;color:var(--text3)">自費總額</div>
-            <div style="font-size:20px;font-weight:700;color:var(--teal)" id="sf-total">65.76M</div>
-            <div style="font-size:10px;color:var(--text3)" id="sf-total-sub">65,761,035 元</div>
+            <div style="font-size:20px;font-weight:700;color:var(--teal)" id="sf-total">0.00M</div>
+            <div style="font-size:10px;color:var(--text3)" id="sf-total-sub">0 元</div>
           </div>
           <div style="flex:1;background:var(--green-l);border:1px solid var(--green-m);border-radius:8px;padding:10px 12px">
             <div style="font-size:10px;color:var(--text3)">vs 去年同期</div>
-            <div style="font-size: 20px; font-weight: 700; color: var(--red);" id="sf-gr">-30.4%</div>
+            <div style="font-size: 20px; font-weight: 700; color: var(--red);" id="sf-gr">-100.0%</div>
             <div style="font-size:10px;color:var(--text3)" id="sf-gr-sub">vs 民國114年同期</div>
           </div>
         </div>
-        <div id="sf-bar-list" style="max-height:260px;overflow-y:auto"><div class="mbar"><span class="mbar-name" title="A2710 骨科">1. 骨科</span><div class="mbar-bg"><div class="mbar-fill" style="width:100%;background:var(--teal)"></div></div><span class="mbar-val">7.16M</span><span class="dn" style="font-size:10px">-36.7%</span></div><div class="mbar"><span class="mbar-name" title="A1210 肝膽胃腸科">2. 肝膽胃腸科</span><div class="mbar-bg"><div class="mbar-fill" style="width:65.11207623962478%;background:var(--teal)"></div></div><span class="mbar-val">4.66M</span><span class="dn" style="font-size:10px">-21.3%</span></div><div class="mbar"><span class="mbar-name" title="A2630 泌尿科">3. 泌尿科</span><div class="mbar-bg"><div class="mbar-fill" style="width:51.29579636192078%;background:var(--teal)"></div></div><span class="mbar-val">3.67M</span><span class="dn" style="font-size:10px">-8.6%</span></div><div class="mbar"><span class="mbar-name" title="A7220 婦產科">4. 婦產科</span><div class="mbar-bg"><div class="mbar-fill" style="width:49.2180278975493%;background:var(--teal)"></div></div><span class="mbar-val">3.52M</span><span class="dn" style="font-size:10px">-42.7%</span></div><div class="mbar"><span class="mbar-name" title="AY100 手術一般外科組">5. 手術一般外科組</span><div class="mbar-bg"><div class="mbar-fill" style="width:40.90720558588236%;background:var(--teal)"></div></div><span class="mbar-val">2.93M</span><span class="dn" style="font-size:10px">-11.5%</span></div><div class="mbar"><span class="mbar-name" title="A1310 胸腔內科">6. 胸腔內科</span><div class="mbar-bg"><div class="mbar-fill" style="width:40.26746866926951%;background:var(--teal)"></div></div><span class="mbar-val">2.88M</span><span class="dn" style="font-size:10px">-42.1%</span></div><div class="mbar"><span class="mbar-name" title="A3A00 麻醉科">7. 麻醉科</span><div class="mbar-bg"><div class="mbar-fill" style="width:40.02640392612714%;background:var(--teal)"></div></div><span class="mbar-val">2.86M</span><span class="up" style="font-size:10px">+1.6%</span></div><div class="mbar"><span class="mbar-name" title="AF280 預防健檢中心(S2)">8. 預防健檢中心(S2)</span><div class="mbar-bg"><div class="mbar-fill" style="width:39.56878618242047%;background:var(--teal)"></div></div><span class="mbar-val">2.83M</span><span class="dn" style="font-size:10px">-41.6%</span></div><div class="mbar"><span class="mbar-name" title="A2810 直腸外科">9. 直腸外科</span><div class="mbar-bg"><div class="mbar-fill" style="width:39.49009426539817%;background:var(--teal)"></div></div><span class="mbar-val">2.83M</span><span class="dn" style="font-size:10px">-34.2%</span></div><div class="mbar"><span class="mbar-name" title="A1530 腎臟內科">10. 腎臟內科</span><div class="mbar-bg"><div class="mbar-fill" style="width:34.64783725097313%;background:var(--teal)"></div></div><span class="mbar-val">2.48M</span><span class="dn" style="font-size:10px">-16.0%</span></div><div class="mbar"><span class="mbar-name" title="AA110 一般兒科">11. 一般兒科</span><div class="mbar-bg"><div class="mbar-fill" style="width:33.42120201449072%;background:var(--teal)"></div></div><span class="mbar-val">2.39M</span><span class="dn" style="font-size:10px">-42.9%</span></div><div class="mbar"><span class="mbar-name" title="A2110 一般外科">12. 一般外科</span><div class="mbar-bg"><div class="mbar-fill" style="width:28.677369289106363%;background:var(--teal)"></div></div><span class="mbar-val">2.05M</span><span class="dn" style="font-size:10px">-8.0%</span></div><div class="mbar" style="color: var(--text3);"><span class="mbar-name">其他 (111科)</span><div class="mbar-bg"><div class="mbar-fill" style="width:356.3629213637026%;background:#9ca3af"></div></div><span class="mbar-val">25.50M</span></div></div>
+        <div id="sf-bar-list" style="max-height:260px;overflow-y:auto"></div>
       </div>
       <!-- 右：圓餅圖 -->
       <div>
@@ -1957,31 +1970,22 @@ function renderBudget(){
     allQNote + (d.noBase ? '<span id="bgt-base-hint" style="display:inline-flex;align-items:center;gap:8px;margin-left:8px"><span style="color:var(--amber);font-weight:700">⚠ '+tw(selYr)+'年'+q+' 基期未設定</span><span style="font-size:10px;color:var(--text3)">輸入健保局核定基期：</span><input type="number" id="bgt-base-input" step="0.01" placeholder="百萬點" style="width:80px;height:22px;border:1.5px solid var(--amber-m);border-radius:5px;padding:0 6px;font-size:11px"><button onclick="applyBaseInput()" style="height:22px;padding:0 8px;background:var(--amber);color:#fff;border:none;border-radius:5px;font-size:11px;cursor:pointer;font-family:inherit">套用</button></span>' : '')
   );
   const _bgtInfo=document.getElementById('bgt-info');if(_bgtInfo)_bgtInfo.textContent=`顯示：民國${tw(selYr)}年 ${q} 全季資料`;
-  if(!hasReport){
-    // 未上傳院長報告卡 → 上排 KPI 卡不呈現核定數值
-    document.getElementById('kpi-base').textContent='—';   document.getElementById('kpi-base').style.color='var(--text3)';
-    document.getElementById('kpi-actual').textContent='—'; document.getElementById('kpi-actual-sub').textContent='vs 基期 —';
-    document.getElementById('kpi-remain').textContent='—'; document.getElementById('kpi-remain-sub').innerHTML='<span style="color:var(--text3)">待上傳報告卡</span>';
-    document.getElementById('kpi-effort').textContent='—'; document.getElementById('kpi-effort-sub').textContent='努力空間 —';
-    document.getElementById('kpi-stage').textContent='待報告卡'; document.getElementById('kpi-stage').style.color='var(--text3)';
-    document.getElementById('kpi-stage-sub').textContent='尚未上傳院長報告卡';
-  } else {
-    document.getElementById('kpi-base').textContent = d.base!=null ? d.base.toFixed(2)+'M' : '未設定';
-    document.getElementById('kpi-base').style.color = d.base!=null ? '' : 'var(--text3)';
-    document.getElementById('kpi-actual').textContent = d.actual!=null ? d.actual.toFixed(2)+'M' : '—';
-    document.getElementById('kpi-actual-sub').textContent = d.remain!=null ? `vs 基期 ${d.remain>0?'+':''}${d.remain.toFixed(2)}M` : 'vs 基期 —';
-    document.getElementById('kpi-remain').textContent = d.remain!=null ? (d.remain>0?'+':'')+d.remain.toFixed(2)+'M' : '—';
-    document.getElementById('kpi-remain-sub').innerHTML=d.remain!=null?(d.remain>0?'<span class="dn">▼ 超基期</span>':'<span class="up">▲ 未達基期</span>'):'<span style="color:var(--text3)">基期未設定</span>';
-    document.getElementById('kpi-effort').textContent = d.effort!=null ? d.effort.toFixed(2)+'M' : '—';
-    document.getElementById('kpi-effort-sub').textContent = (d.effort!=null && d.remain!=null) ? `努力空間 ${(d.effort+Math.max(0,d.remain)).toFixed(2)}M` : '努力空間 —';
-    document.getElementById('kpi-stage').textContent = d.stage;
-    if(d.noBase) document.getElementById('kpi-stage-sub').textContent='請至右上角設定歷史基期';
-    const sc={0:'var(--amber)',1:'var(--green)',2:'var(--amber)',3:'var(--red)'};
-    document.getElementById('kpi-stage').style.color=sc[d.stageN]||'var(--text)';
-    document.getElementById('kpi-stage-sub').textContent=getStageDesc(d.stageN, selYr, q);
-  }
+  // KPI 卡以「基期是否設定」為準（基期+實際即可算出，不需院長報告卡）
+  document.getElementById('kpi-base').textContent = d.base!=null ? d.base.toFixed(2)+'M' : '未設定';
+  document.getElementById('kpi-base').style.color = d.base!=null ? '' : 'var(--text3)';
+  document.getElementById('kpi-actual').textContent = d.actual!=null ? d.actual.toFixed(2)+'M' : '—';
+  document.getElementById('kpi-actual-sub').textContent = d.remain!=null ? `vs 基期 ${d.remain>0?'+':''}${d.remain.toFixed(2)}M` : 'vs 基期 —';
+  document.getElementById('kpi-remain').textContent = d.remain!=null ? (d.remain>0?'+':'')+d.remain.toFixed(2)+'M' : '—';
+  document.getElementById('kpi-remain-sub').innerHTML=d.remain!=null?(d.remain>0?'<span class="dn">▼ 超基期</span>':'<span class="up">▲ 未達基期</span>'):'<span style="color:var(--text3)">基期未設定</span>';
+  document.getElementById('kpi-effort').textContent = d.effort!=null ? d.effort.toFixed(2)+'M' : '—';
+  document.getElementById('kpi-effort-sub').textContent = (d.effort!=null && d.remain!=null) ? `努力空間 ${(d.effort+Math.max(0,d.remain)).toFixed(2)}M` : '努力空間 —';
+  document.getElementById('kpi-stage').textContent = d.stage!=null ? d.stage : '—';
+  if(d.noBase) document.getElementById('kpi-stage-sub').textContent='請至右上角設定歷史基期';
+  const sc={0:'var(--amber)',1:'var(--green)',2:'var(--amber)',3:'var(--red)'};
+  document.getElementById('kpi-stage').style.color=sc[d.stageN]||'var(--text)';
+  document.getElementById('kpi-stage-sub').textContent=getStageDesc(d.stageN, selYr, q);
   document.getElementById('op-rate').textContent = (d.opRate!=null) ? d.opRate.toFixed(2)+'%' : '—';
-  renderStageViz(d, hasReport);
+  renderStageViz(d);
   renderMonthlyGrid();
   renderTrendChart();
   renderSrcChart();
@@ -1991,25 +1995,24 @@ function renderBudget(){
   renderEstProgress(selYr, q, d);
 }
 
-function renderStageViz(d, hasReport){
+function renderStageViz(d){
   const el=document.getElementById('stage-viz');
   const ph=(msg)=>{ el.innerHTML='<div style="padding:24px 12px;text-align:center;color:var(--text3);font-size:12px">'+msg+'</div>'; };
-  if(!hasReport){
-    ph('尚未上傳院長報告卡，暫不呈現超額分階狀態。<br>上傳該年季院長報告卡後即會顯示。');
-    return;
-  }
+  // 超額分階只需要「基期(0階)」即可畫出階梯門檻；實際點數存在時才畫指針
   if(d.base==null){
     ph('此年季尚未設定基期(0階)，無法顯示超額分階。<br>請於上方輸入基期或至「📋 基期設定」設定後即可顯示。');
-    return;
-  }
-  if(d.actual==null){
-    ph('此年季尚無實際點數資料，無法顯示超額分階。');
     return;
   }
   const total=d.base*1.18+10;
   const p0=d.base/total*100,p1=(d.base*1.055-d.base)/total*100;
   const p2=(d.base*1.08-d.base*1.055)/total*100,p3=4,p4=3;
-  const actualPct=Math.min(d.actual/total*100,99);
+  const hasActual = d.actual!=null;
+  const actualPct = hasActual ? Math.min(d.actual/total*100,99) : 0;
+  const needle = hasActual ? `<div class="stage-marker"><div class="stage-needle" style="left:${actualPct}%">
+      <div class="stage-needle-line" style="background:${d.actual>=d.base?'#16a34a':'#dc2626'}"></div>
+      <div class="stage-needle-label" style="color:${d.actual>=d.base?'#16a34a':'#dc2626'}">${d.actual.toFixed(1)}M</div>
+    </div></div>` : '';
+  const noActualNote = hasActual ? '' : '<div style="text-align:center;font-size:10px;color:var(--text3);margin-top:6px">（尚無實際點數，僅顯示基期門檻）</div>';
   el.innerHTML=`<div class="stage-wrap"><div style="position:relative">
     <div class="stage-row">
       <div class="stage-seg" style="flex:${p0};background:#dbeafe;color:#1d4ed8">0階 基期 ${d.base.toFixed(1)}M</div>
@@ -2018,15 +2021,12 @@ function renderStageViz(d, hasReport){
       <div class="stage-seg" style="flex:${p3};background:#fecaca;color:#991b1b">+11%</div>
       <div class="stage-seg" style="flex:${p4};background:#e9d5ff;color:#4c1d95">&gt;15%</div>
     </div>
-    <div class="stage-marker"><div class="stage-needle" style="left:${actualPct}%">
-      <div class="stage-needle-line" style="background:${d.actual>=d.base?'#16a34a':'#dc2626'}"></div>
-      <div class="stage-needle-label" style="color:${d.actual>=d.base?'#16a34a':'#dc2626'}">${d.actual.toFixed(1)}M</div>
-    </div></div>
+    ${needle}
   </div>
   <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px">
     <span>基期 ${d.base.toFixed(1)}M</span><span>1階 ${(d.base*1.055).toFixed(1)}M</span>
     <span>2階 ${(d.base*1.08).toFixed(1)}M</span><span>3階 ${(d.base*1.11).toFixed(1)}M</span><span>&gt;15%</span>
-  </div></div>`;
+  </div>${noActualNote}</div>`;
 }
 
 function renderMonthlyGrid(){
@@ -2326,19 +2326,13 @@ function renderKpiTable(){
   if(!tbody) return;
   tbody.innerHTML = '';
 
-  // 需要院長報告卡才呈現的核定相關指標；未上傳該季報告卡時以「—」呈現
-  const REPORT_METRICS = ['基期(0階)','實際/預估點數','剩餘基期','5.5%成長額度','預估落點'];
-  const qReport = qs.map(function(q){ return !!getReport(selYr, q); });
-
   metrics.forEach(function(m){
     const tr = document.createElement('tr');
-    const need = REPORT_METRICS.indexOf(m.label) !== -1;
     let html = '<td class="left"'+(m.bold?' style="font-weight:700"':'')+'>'+m.label+'</td>';
     rows_data.forEach(function(d, qi){
       var q = qs[qi];
-      const gate  = need && !qReport[qi];
-      const val   = gate ? '—' : m.fn(d, q);
-      const color = gate ? '' : m.color(d);
+      const val   = m.fn(d, q);   // 各指標函式本身已對 null 回傳「—」
+      const color = m.color(d);
       html += '<td class="num'+(m.bold?' hi':'')+'" style="'+(color?'color:'+color+';font-weight:700':'')+'">'+val+'</td>';
     });
     tr.innerHTML = html;
