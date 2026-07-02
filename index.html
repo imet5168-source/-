@@ -1470,81 +1470,59 @@ function loadGithubSettings(){
   if(fEl) fEl.value = file;
 }
 
-async function syncToGithub(reportData){
+// 通用：讀取 GitHub repo 內「目前的檔案原始碼」→ 套用 applyFn(原始碼)→新原始碼 → 推回。
+// 直接編輯 repo 內真正的檔案（來源真相），不依賴瀏覽器 DOM（outerHTML 會受快取/執行期注入影響而不可靠）。
+async function updateGithubFile(applyFn, commitMsg){
   const token = localStorage.getItem('smh_github_token')||'';
   const repo  = localStorage.getItem('smh_github_repo')||'';
   const file  = localStorage.getItem('smh_github_file')||'index.html';
+  if(!token){ alert('請先於「院長報告卡」設定 GitHub Token'); return false; }
+  if(!repo) { alert('請先設定 repo 名稱（帳號/repo）'); return false; }
 
-  if(!token){ alert('請先輸入 GitHub Token'); return false; }
-  if(!repo) { alert('請先輸入 repo 名稱'); return false; }
-
-  // 更新 BUILTIN_REPORTS 並產生新 HTML
-  const newHtml = buildUpdatedHtml(reportData);
-  if(!newHtml){ alert('產生 HTML 失敗'); return false; }
-
-  // 取得目前檔案的 SHA（GitHub API 更新需要）
   const statusEl = document.createElement('div');
   statusEl.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1B3A6B;color:#fff;padding:20px 30px;border-radius:10px;font-size:14px;z-index:9999;text-align:center';
-  statusEl.innerHTML = '⏳ 正在同步到 GitHub...';
+  statusEl.innerHTML = '⏳ 讀取共用檔案...';
   document.body.appendChild(statusEl);
-
   try{
-    // 1. 取得目前檔案 SHA
     const getResp = await fetch(`https://api.github.com/repos/${repo}/contents/${file}`,{
-      headers:{
-        'Authorization': 'token '+token,
-        'Accept': 'application/vnd.github.v3+json'
-      }
+      headers:{ 'Authorization':'token '+token, 'Accept':'application/vnd.github.v3+json' }
     });
-    if(!getResp.ok){
-      const err = await getResp.json();
-      throw new Error('取得檔案失敗：'+( err.message||getResp.status));
-    }
-    const fileInfo = await getResp.json();
-    const sha = fileInfo.sha;
-
+    if(!getResp.ok){ const err=await getResp.json(); throw new Error('取得檔案失敗：'+(err.message||getResp.status)); }
+    const info = await getResp.json();
+    const rawText = decodeURIComponent(escape(atob(String(info.content||'').replace(/\s/g,''))));
+    const newText = applyFn(rawText);
+    if(!newText){ throw new Error('在共用檔案中找不到要更新的區塊（格式可能不符）'); }
+    if(newText===rawText){ throw new Error('內容沒有變更（值與現況相同）'); }
     statusEl.innerHTML = '⏳ 上傳新版本中...';
-
-    // 2. 更新檔案
-    const content = btoa(unescape(encodeURIComponent(newHtml)));
+    const content = btoa(unescape(encodeURIComponent(newText)));
     const putResp = await fetch(`https://api.github.com/repos/${repo}/contents/${file}`,{
-      method: 'PUT',
-      headers:{
-        'Authorization': 'token '+token,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        message: '更新院長報告卡資料 '+new Date().toLocaleDateString('zh-TW'),
-        content: content,
-        sha: sha,
-      })
+      method:'PUT',
+      headers:{ 'Authorization':'token '+token, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' },
+      body: JSON.stringify({ message: commitMsg, content: content, sha: info.sha })
     });
-
-    if(!putResp.ok){
-      const err = await putResp.json();
-      throw new Error('上傳失敗：'+(err.message||putResp.status));
-    }
-
+    if(!putResp.ok){ const err=await putResp.json(); throw new Error('上傳失敗：'+(err.message||putResp.status)); }
     document.body.removeChild(statusEl);
-    alert('✓ 已同步到 GitHub！\n約 30 秒後所有人開啟連結即可看到更新。');
+    alert('✓ 已同步到共用檔案！約 30 秒後所有人開啟連結即可看到更新。');
     return true;
-
   }catch(e){
-    document.body.removeChild(statusEl);
+    if(statusEl.parentNode) document.body.removeChild(statusEl);
     alert('❌ 同步失敗：'+e.message+'\n\n請確認：\n1. Token 是否正確\n2. repo 名稱格式（帳號/repo）\n3. Token 有 repo 權限');
     return false;
   }
 }
 
-function buildUpdatedHtml(d){
-  // 取得目前頁面的 HTML，更新 BUILTIN_REPORTS 中對應的資料
+async function syncToGithub(reportData){
+  return await updateGithubFile(function(src){ return buildUpdatedHtml(reportData, src); },
+    '更新院長報告卡資料 '+new Date().toLocaleDateString('zh-TW'));
+}
+
+function buildUpdatedHtml(d, srcHtml){
+  // 在傳入的原始碼 srcHtml 中，更新 BUILTIN_REPORTS 對應的資料
   const yr = parseInt(d.year) + 1911;
   const q  = d.quarter;
   const key = yr+'_'+q;
 
-  // 取得目前 HTML（透過 document）
-  const html = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  const html = srcHtml;
 
   // 找到 BUILTIN_REPORTS 並更新
   const newEntry = `  '${key}': {\n`
@@ -1795,49 +1773,14 @@ function serializeBaseTable(){
   return s;
 }
 
-// 將基期設定同步到共用檔案（GitHub 寫回 HTML，與院長報告卡同一機制）
+// 將基期設定同步到共用檔案（直接改 repo 原始碼中的 const BASE_TABLE 區塊）
 async function syncBaseTableToGithub(){
   const block = serializeBaseTable();
-  const html = '<!DOCTYPE html>\n'+document.documentElement.outerHTML;
-  const newHtml = html.replace(/const BASE_TABLE = \{[\s\S]*?\};/, block+';');
-  if(newHtml===html){ alert('❌ 找不到 BASE_TABLE 區塊，無法同步'); return false; }
-  return await pushHtmlToGithub(newHtml, '更新小總額基期設定 '+new Date().toLocaleDateString('zh-TW'));
-}
-
-// 通用：把整份 HTML 寫回 GitHub（供基期／報告卡共用）
-async function pushHtmlToGithub(newHtml, commitMsg){
-  const token = localStorage.getItem('smh_github_token')||'';
-  const repo  = localStorage.getItem('smh_github_repo')||'';
-  const file  = localStorage.getItem('smh_github_file')||'index.html';
-  if(!token){ alert('請先於「院長報告卡」設定 GitHub Token'); return false; }
-  if(!repo){  alert('請先設定 repo 名稱（帳號/repo）'); return false; }
-
-  const statusEl = document.createElement('div');
-  statusEl.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:#1B3A6B;color:#fff;padding:20px 30px;border-radius:10px;font-size:14px;z-index:9999;text-align:center';
-  statusEl.innerHTML = '⏳ 正在同步到共用檔案...';
-  document.body.appendChild(statusEl);
-  try{
-    const getResp = await fetch(`https://api.github.com/repos/${repo}/contents/${file}`,{
-      headers:{ 'Authorization':'token '+token, 'Accept':'application/vnd.github.v3+json' }
-    });
-    if(!getResp.ok){ const err=await getResp.json(); throw new Error('取得檔案失敗：'+(err.message||getResp.status)); }
-    const fileInfo = await getResp.json();
-    statusEl.innerHTML = '⏳ 上傳新版本中...';
-    const content = btoa(unescape(encodeURIComponent(newHtml)));
-    const putResp = await fetch(`https://api.github.com/repos/${repo}/contents/${file}`,{
-      method:'PUT',
-      headers:{ 'Authorization':'token '+token, 'Accept':'application/vnd.github.v3+json', 'Content-Type':'application/json' },
-      body: JSON.stringify({ message: commitMsg, content: content, sha: fileInfo.sha })
-    });
-    if(!putResp.ok){ const err=await putResp.json(); throw new Error('上傳失敗：'+(err.message||putResp.status)); }
-    document.body.removeChild(statusEl);
-    alert('✓ 已同步到共用檔案！約 30 秒後所有人開啟連結即可看到更新。');
-    return true;
-  }catch(e){
-    if(statusEl.parentNode) document.body.removeChild(statusEl);
-    alert('❌ 同步失敗：'+e.message+'\n\n請確認：\n1. Token 是否正確\n2. repo 名稱格式（帳號/repo）\n3. Token 有 repo 權限');
-    return false;
-  }
+  return await updateGithubFile(function(src){
+    const re=/const BASE_TABLE = \{[\s\S]*?\n\};/;
+    if(!re.test(src)) return null;
+    return src.replace(re, block+';');
+  }, '更新小總額基期設定 '+new Date().toLocaleDateString('zh-TW'));
 }
 
 // ── 更新 BASE_TABLE（供使用者手動輸入歷史基期）──
@@ -3420,18 +3363,19 @@ function loadDemoData(){
   // 未曾匯入 → 目前即內建資料，僅關閉視窗
 }
 
-// 將匯入後的各資料表寫回共用檔案（GitHub 重寫 const 陣列）
-function syncDataToGithub(){
-  var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+// 將匯入後的各資料表寫回共用檔案（直接改 repo 原始碼中的 8 個 const 陣列）
+async function syncDataToGithub(){
   var arrs={TREND_HISTORY:TREND_HISTORY,NHIS_MONTHLY:NHIS_MONTHLY,SRC_Q:SRC_Q,IPD_M:IPD_M,IPD_Q:IPD_Q,DEPT_Q:DEPT_Q,DR_Q:DR_Q,SF_DEPT:SF_DEPT};
-  var names=Object.keys(arrs), miss=[];
-  names.forEach(function(name){
-    var re=new RegExp('const '+name+'\\s*=\\s*\\[[\\s\\S]*?\\];');
-    if(re.test(html)) html=html.replace(re, 'const '+name+' = '+JSON.stringify(arrs[name])+';');
-    else miss.push(name);
-  });
-  if(miss.length){ alert('❌ 找不到資料區塊：'+miss.join('、')+'，取消同步'); return; }
-  pushHtmlToGithub(html, '更新小總額資料（匯入）'+new Date().toLocaleDateString('zh-TW'));
+  return await updateGithubFile(function(src){
+    var out=src, miss=[];
+    Object.keys(arrs).forEach(function(name){
+      var re=new RegExp('const '+name+'\\s*=\\s*\\[[\\s\\S]*?\\];');
+      if(re.test(out)) out=out.replace(re, 'const '+name+' = '+JSON.stringify(arrs[name])+';');
+      else miss.push(name);
+    });
+    if(miss.length){ alert('❌ 在共用檔案找不到資料區塊：'+miss.join('、')); return null; }
+    return out;
+  }, '更新小總額資料（匯入）'+new Date().toLocaleDateString('zh-TW'));
 }
 
 // ═══════════════════════════════════════
