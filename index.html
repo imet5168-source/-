@@ -213,8 +213,8 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
     </div>
   </div>
   <div style="display:flex;gap:8px;align-items:center">
-    <span class="badge b-blue"><span class="dot-live"></span><span id="hdr-period">民國115年 Q3</span></span>
-    <span class="badge b-red" id="hdr-alert">⚠ 住院衰退 -100.0%</span>
+    <span class="badge b-blue"><span class="dot-live"></span><span id="hdr-period">民國115年 全年</span></span>
+    <span class="badge b-red" id="hdr-alert">⚠ 住院衰退 -54.6%</span>
     <button class="btn btn-secondary" onclick="showReportModal()" style="height:28px;font-size:11px;border-color:var(--teal);color:var(--teal)" title="上傳院長報告卡PDF，AI自動解析基期及核減資料">
       📄 院長報告卡
     </button>
@@ -260,7 +260,7 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
       <option value="Q3">Q3</option>
       <option value="Q4">Q4</option>
     </select>
-    <div id="global-filter-badge" style="height: 30px; display: inline-flex; align-items: center; padding: 0px 12px; background: var(--blue); color: rgb(255, 255, 255); border-radius: 7px; font-size: 11px; font-weight: 700; white-space: nowrap;">民國115年 Q3</div>
+    <div id="global-filter-badge" style="height: 30px; display: inline-flex; align-items: center; padding: 0px 12px; background: var(--text3); color: rgb(255, 255, 255); border-radius: 7px; font-size: 11px; font-weight: 700; white-space: nowrap;">民國115年 全年</div>
   </div>
 </div>
 <!-- ── Nav ── -->
@@ -281,34 +281,34 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 <div id="page-budget" class="page active">
 
   <!-- 季別篩選 -->
-  <div id="bgt-status-bar" class="page-filter-status"><span class="pfs-label">目前查詢：</span><span class="pfs-tag">民國115年</span><span class="pfs-tag">Q3</span></div>
+  <div id="bgt-status-bar" class="page-filter-status"><span class="pfs-label">目前查詢：</span><span class="pfs-tag">民國115年</span><span class="pfs-tag">全年</span><span style="color:var(--amber);font-size:10px;margin-left:8px">⚠ 已選「全部季」，下方KPI卡顯示Q1資料，請選特定季查看其他季</span></div>
 
   <!-- KPI Row -->
   <div class="g5">
     <div class="kpi kpi-blue">
       <div class="kpi-lbl">基期(0階)</div>
-      <div class="kpi-val" id="kpi-base">398.40M</div>
+      <div class="kpi-val" id="kpi-base">374.14M</div>
       <div class="kpi-sub" id="kpi-base-sub">百萬點</div>
     </div>
     <div class="kpi kpi-teal">
       <div class="kpi-lbl">實際一般服務點數</div>
-      <div class="kpi-val" id="kpi-actual">—</div>
-      <div class="kpi-sub" id="kpi-actual-sub">vs 基期 —</div>
+      <div class="kpi-val" id="kpi-actual">391.32M</div>
+      <div class="kpi-sub" id="kpi-actual-sub">vs 基期 +17.18M</div>
     </div>
     <div class="kpi kpi-amber">
       <div class="kpi-lbl">剩餘基期額度</div>
-      <div class="kpi-val" id="kpi-remain">—</div>
-      <div class="kpi-sub" id="kpi-remain-sub"><span style="color:var(--text3)">基期未設定</span></div>
+      <div class="kpi-val" id="kpi-remain">+17.18M</div>
+      <div class="kpi-sub" id="kpi-remain-sub"><span class="dn">▼ 超基期</span></div>
     </div>
     <div class="kpi kpi-green">
       <div class="kpi-lbl">5.5%成長額度（努力空間）</div>
-      <div class="kpi-val" id="kpi-effort">21.91M</div>
-      <div class="kpi-sub" id="kpi-effort-sub">努力空間 —</div>
+      <div class="kpi-val" id="kpi-effort">20.58M</div>
+      <div class="kpi-sub" id="kpi-effort-sub">努力空間 37.76M</div>
     </div>
     <div class="kpi kpi-purple">
       <div class="kpi-lbl">預估落點</div>
-      <div class="kpi-val" id="kpi-stage" style="color: var(--text);">待確認</div>
-      <div class="kpi-sub" id="kpi-stage-sub">請設定基期</div>
+      <div class="kpi-val" id="kpi-stage" style="color: var(--green);">1階</div>
+      <div class="kpi-sub" id="kpi-stage-sub">1階：超額部分×100%核付</div>
     </div>
   </div>
 
@@ -318,18 +318,21 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
       <div class="card-title">超額分階狀態</div>
       <div id="stage-viz"><div class="stage-wrap"><div style="position:relative">
     <div class="stage-row">
-      <div class="stage-seg" style="flex:82.98063785116805;background:#dbeafe;color:#1d4ed8">0階 基期 398.4M</div>
-      <div class="stage-seg" style="flex:4.563935081814239;background:#bbf7d0;color:#14532d">+5.5% 1階</div>
-      <div class="stage-seg" style="flex:2.074515946279209;background:#fde68a;color:#92400e">+8% 2階</div>
+      <div class="stage-seg" style="flex:82.86873824336986;background:#dbeafe;color:#1d4ed8">0階 基期 374.1M</div>
+      <div class="stage-seg" style="flex:4.557780603385331;background:#bbf7d0;color:#14532d">+5.5% 1階</div>
+      <div class="stage-seg" style="flex:2.0717184560842656;background:#fde68a;color:#92400e">+8% 2階</div>
       <div class="stage-seg" style="flex:4;background:#fecaca;color:#991b1b">+11%</div>
       <div class="stage-seg" style="flex:3;background:#e9d5ff;color:#4c1d95">&gt;15%</div>
     </div>
-    
+    <div class="stage-marker"><div class="stage-needle" style="left:86.6730313713316%">
+      <div class="stage-needle-line" style="background:#16a34a"></div>
+      <div class="stage-needle-label" style="color:#16a34a">391.3M</div>
+    </div></div>
   </div>
   <div style="display:flex;justify-content:space-between;font-size:9px;color:var(--text3);margin-top:4px">
-    <span>基期 398.4M</span><span>1階 420.3M</span>
-    <span>2階 430.3M</span><span>3階 442.2M</span><span>&gt;15%</span>
-  </div><div style="text-align:center;font-size:10px;color:var(--text3);margin-top:6px">（尚無實際點數，僅顯示基期門檻）</div></div></div>
+    <span>基期 374.1M</span><span>1階 394.7M</span>
+    <span>2階 404.1M</span><span>3階 415.3M</span><span>&gt;15%</span>
+  </div></div></div>
 
       <!-- 當季預估進度（有部分月份資料時顯示）-->
       <div id="est-progress-block" style="display:none;margin-top:12px;padding:10px 12px;background:var(--amber-l);border:1px solid var(--amber-m);border-radius:8px">
@@ -369,8 +372,8 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 
       <div style="margin-top:14px">
         <table class="tbl" id="bgt-kpi-table">
-          <thead id="bgt-kpi-thead"><tr><th style="text-align:left">指標（民國115年）</th><th>Q3</th></tr></thead>
-          <tbody id="bgt-kpi-tbody"><tr><td class="left">基期(0階)</td><td class="num" style="">398.40M</td></tr><tr><td class="left">實際/預估點數</td><td class="num" style="">—</td></tr><tr><td class="left">剩餘基期</td><td class="num" style="">—</td></tr><tr><td class="left">5.5%成長額度</td><td class="num" style="color:var(--green);font-weight:700">21.91M</td></tr><tr><td class="left">門診成長點數</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left">住院成長點數</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left">去年成長點數</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left" style="font-weight:700">預估落點</td><td class="num hi" style="color:var(--text3);font-weight:700">待確認</td></tr></tbody>
+          <thead id="bgt-kpi-thead"><tr><th style="text-align:left">指標（民國115年）</th><th>Q1</th><th>Q2</th><th>Q3</th><th>Q4</th></tr></thead>
+          <tbody id="bgt-kpi-tbody"><tr><td class="left">基期(0階)</td><td class="num" style="">374.14M</td><td class="num" style="">398.22M</td><td class="num" style="">398.40M</td><td class="num" style="">—</td></tr><tr><td class="left">實際/預估點數</td><td class="num" style="">391.32M</td><td class="num" style="">359.61M</td><td class="num" style="">—</td><td class="num" style="">—</td></tr><tr><td class="left">剩餘基期</td><td class="num" style="color:var(--green);font-weight:700">+17.18M</td><td class="num" style="color:var(--red);font-weight:700">-38.61M</td><td class="num" style="">—</td><td class="num" style="">—</td></tr><tr><td class="left">5.5%成長額度</td><td class="num" style="color:var(--green);font-weight:700">20.58M</td><td class="num" style="color:var(--green);font-weight:700">21.90M</td><td class="num" style="color:var(--green);font-weight:700">21.91M</td><td class="num" style="color:var(--green);font-weight:700">—</td></tr><tr><td class="left">門診成長點數</td><td class="num" style="color:var(--green);font-weight:700">+3.67M</td><td class="num" style="color:var(--red);font-weight:700">-21.64M</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left">住院成長點數</td><td class="num" style="color:var(--red);font-weight:700">-12.22M</td><td class="num" style="color:var(--red);font-weight:700">-29.91M</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left">去年成長點數</td><td class="num" style="color:var(--red);font-weight:700">-8.54M</td><td class="num" style="color:var(--red);font-weight:700">-51.55M</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td><td class="num" style="color:var(--green);font-weight:700">0.00M</td></tr><tr><td class="left" style="font-weight:700">預估落點</td><td class="num hi" style="color:var(--green);font-weight:700">1階</td><td class="num hi" style="color:var(--amber);font-weight:700">未達基期</td><td class="num hi" style="color:var(--text3);font-weight:700">待確認</td><td class="num hi" style="color:var(--text3);font-weight:700">待確認</td></tr></tbody>
         </table>
       </div>
     </div>
@@ -388,47 +391,47 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
 
   <!-- 門住診結構 -->
   <div class="card mb14">
-    <div class="card-title" id="struct-title">民國115年 Q3 醫療費用結構</div>
+    <div class="card-title" id="struct-title">民國115年 Q1 醫療費用結構</div>
     <div class="g3">
       <!-- 左：門住診拆分 -->
       <div>
         <div style="font-size:11px;color:var(--text2);margin-bottom:8px">一般服務門住診拆分</div>
         <div style="display:flex;gap:3px;height:20px;border-radius:5px;overflow:hidden;margin-bottom:6px" id="split-bar">
-          <div id="split-op" style="flex: 55 1 0%; background: rgb(37, 99, 235); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">門診 55.0%</div>
-          <div id="split-ip" style="flex: 45 1 0%; background: rgb(220, 38, 38); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">住院 45.0%</div>
+          <div id="split-op" style="flex: 54 1 0%; background: rgb(37, 99, 235); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">門診 54.2%</div>
+          <div id="split-ip" style="flex: 46 1 0%; background: rgb(220, 38, 38); display: flex; align-items: center; justify-content: center; font-size: 9px; font-weight: 700; color: rgb(255, 255, 255);">住院 45.8%</div>
         </div>
         <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--text2)">
-          <span>門診 <span id="struct-op-pts">—</span> <span id="struct-op-gr" class="dn">-100.0%</span></span>
-          <span>住院 <span id="struct-ip-pts">—</span> <span id="struct-ip-gr" class="dn">-100.0%</span></span>
+          <span>門診 <span id="struct-op-pts">213.3M</span> <span id="struct-op-gr" class="up">+1.8%</span></span>
+          <span>住院 <span id="struct-ip-pts">179.9M</span> <span id="struct-ip-gr" class="dn">-6.4%</span></span>
         </div>
         <div style="margin-top:12px;font-size:11px;color:var(--text2)">門診占率</div>
-        <div style="font-size:24px;font-weight:700;color:var(--blue)" id="op-rate">55.00%</div>
+        <div style="font-size:24px;font-weight:700;color:var(--blue)" id="op-rate">54.25%</div>
       </div>
       <!-- 中：來源圓餅圖 -->
       <div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="src-chart-title">115年Q3 各來源收入組成</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="src-chart-title">115年Q1 各來源收入組成</div>
         <div class="chart-box" style="height:110px">
           <canvas id="srcChart" role="img" aria-label="各來源收入圓餅圖" style="box-sizing: border-box; display: block; height: 110px; width: 444px;" width="444" height="110"></canvas>
         </div>
       </div>
       <!-- 右：醫療收入試算（來自院長報告卡）-->
       <div>
-        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="income-calc-title">115年Q3 醫療收入試算</div>
+        <div style="font-size:11px;color:var(--text2);margin-bottom:8px" id="income-calc-title">115年Q1 醫療收入試算</div>
         <table style="width:100%;font-size:11px;border-collapse:collapse" id="income-calc">
-          <tbody><tr><td style="padding:3px 0;color:var(--text3)">總申報點數</td><td style="text-align:right" id="ic-total-pts">—</td></tr>
-          <tr><td style="padding:3px 0;color:var(--red)">總核減點數</td><td style="text-align:right;color:var(--red)" id="ic-deduct">—</td></tr>
-          <tr><td style="padding:3px 0;color:var(--text3)">　核減率</td><td style="text-align:right" id="ic-deduct-rate">—</td></tr>
+          <tbody><tr><td style="padding:3px 0;color:var(--text3)">總申報點數</td><td style="text-align:right" id="ic-total-pts">391,320,341</td></tr>
+          <tr><td style="padding:3px 0;color:var(--red)">總核減點數</td><td style="text-align:right;color:var(--red)" id="ic-deduct">-14,248,824</td></tr>
+          <tr><td style="padding:3px 0;color:var(--text3)">　核減率</td><td style="text-align:right" id="ic-deduct-rate">3.08%</td></tr>
 
-          <tr><td style="padding:3px 0;color:var(--green)">品質補付</td><td style="text-align:right;color:var(--green)" id="ic-quality">—</td></tr>
+          <tr><td style="padding:3px 0;color:var(--green)">品質補付</td><td style="text-align:right;color:var(--green)" id="ic-quality">+514,636</td></tr>
 
-          <tr><td style="padding:3px 0;color:var(--text3)">　方案總核付點數</td><td style="text-align:right" id="ic-final-pay">—</td></tr>
+          <tr><td style="padding:3px 0;color:var(--text3)">　方案總核付點數</td><td style="text-align:right" id="ic-final-pay">379,581,861點</td></tr>
           <tr><td style="padding:3px 0;color:var(--text3)">　健保平均點值</td><td style="text-align:right" id="ic-point-val">0.95</td></tr>
           <tr style="border-top:1px solid var(--border)">
             <td style="padding:5px 0 0;font-weight:700">健保核付小計(元)</td>
-            <td style="text-align:right;color:var(--amber);font-weight:700;font-size:13px" id="ic-total">—</td>
+            <td style="text-align:right;color:var(--amber);font-weight:700;font-size:13px" id="ic-total">360,602,768</td>
           </tr>
         </tbody></table>
-        <div style="font-size: 9px; color: var(--text3); margin-top: 4px;" id="ic-note">尚未上傳院長報告卡，暫不進行醫療收入試算（核減、方案總核付需依報告卡核定資料）</div>
+        <div style="font-size: 9px; color: var(--green); margin-top: 4px;" id="ic-note">資料來源：院長報告卡（方案總核付379,581,861點）｜點值0.95</div>
       </div>
     </div>
   </div>
@@ -436,7 +439,7 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
   <!-- 自費收入分項 -->
   <div class="card mb14" id="sf-card">
     <div class="card-title" style="display:flex;align-items:center;justify-content:space-between">
-      <span id="sf-card-title">民國115年 Q3 自費收入明細</span>
+      <span id="sf-card-title">民國115年 全年 自費收入明細</span>
       <div style="display:flex;gap:6px;align-items:center">
         <span style="font-size:10px;color:var(--text3)">顯示前</span>
         <select id="sf-top-n" onchange="renderSfBlock()" style="height:22px;border:1px solid var(--border2);border-radius:5px;padding:0 6px;font-size:11px;background:var(--surface);font-family:inherit">
@@ -453,16 +456,16 @@ body{background:var(--bg);color:var(--text);font-family:'Microsoft JhengHei','Se
         <div style="display:flex;gap:10px;margin-bottom:12px">
           <div style="flex:1;background:var(--teal-l);border:1px solid #99f6e4;border-radius:8px;padding:10px 12px">
             <div style="font-size:10px;color:var(--text3)">自費總額</div>
-            <div style="font-size:20px;font-weight:700;color:var(--teal)" id="sf-total">0.00M</div>
-            <div style="font-size:10px;color:var(--text3)" id="sf-total-sub">0 元</div>
+            <div style="font-size:20px;font-weight:700;color:var(--teal)" id="sf-total">158.53M</div>
+            <div style="font-size:10px;color:var(--text3)" id="sf-total-sub">158,529,351 元</div>
           </div>
           <div style="flex:1;background:var(--green-l);border:1px solid var(--green-m);border-radius:8px;padding:10px 12px">
             <div style="font-size:10px;color:var(--text3)">vs 去年同期</div>
-            <div style="font-size: 20px; font-weight: 700; color: var(--red);" id="sf-gr">-100.0%</div>
+            <div style="font-size: 20px; font-weight: 700; color: var(--red);" id="sf-gr">-56.8%</div>
             <div style="font-size:10px;color:var(--text3)" id="sf-gr-sub">vs 民國114年同期</div>
           </div>
         </div>
-        <div id="sf-bar-list" style="max-height:260px;overflow-y:auto"></div>
+        <div id="sf-bar-list" style="max-height:260px;overflow-y:auto"><div class="mbar"><span class="mbar-name" title="A2710 骨科">1. 骨科</span><div class="mbar-bg"><div class="mbar-fill" style="width:100%;background:var(--teal)"></div></div><span class="mbar-val">16.31M</span><span class="dn" style="font-size:10px">-59.0%</span></div><div class="mbar"><span class="mbar-name" title="A1210 肝膽胃腸科">2. 肝膽胃腸科</span><div class="mbar-bg"><div class="mbar-fill" style="width:68.2611476025654%;background:var(--teal)"></div></div><span class="mbar-val">11.14M</span><span class="dn" style="font-size:10px">-51.3%</span></div><div class="mbar"><span class="mbar-name" title="A2630 泌尿科">3. 泌尿科</span><div class="mbar-bg"><div class="mbar-fill" style="width:61.6221597066996%;background:var(--teal)"></div></div><span class="mbar-val">10.05M</span><span class="dn" style="font-size:10px">-40.3%</span></div><div class="mbar"><span class="mbar-name" title="A7220 婦產科">4. 婦產科</span><div class="mbar-bg"><div class="mbar-fill" style="width:56.0740800769737%;background:var(--teal)"></div></div><span class="mbar-val">9.15M</span><span class="dn" style="font-size:10px">-61.8%</span></div><div class="mbar"><span class="mbar-name" title="A1310 胸腔內科">5. 胸腔內科</span><div class="mbar-bg"><div class="mbar-fill" style="width:45.50132212729105%;background:var(--teal)"></div></div><span class="mbar-val">7.42M</span><span class="dn" style="font-size:10px">-60.9%</span></div><div class="mbar"><span class="mbar-name" title="A3A00 麻醉科">6. 麻醉科</span><div class="mbar-bg"><div class="mbar-fill" style="width:43.66869113321413%;background:var(--teal)"></div></div><span class="mbar-val">7.12M</span><span class="dn" style="font-size:10px">-47.7%</span></div><div class="mbar"><span class="mbar-name" title="AY100 手術一般外科組">7. 手術一般外科組</span><div class="mbar-bg"><div class="mbar-fill" style="width:42.88212715372868%;background:var(--teal)"></div></div><span class="mbar-val">7.00M</span><span class="dn" style="font-size:10px">-39.0%</span></div><div class="mbar"><span class="mbar-name" title="A2810 直腸外科">8. 直腸外科</span><div class="mbar-bg"><div class="mbar-fill" style="width:42.43495903661253%;background:var(--teal)"></div></div><span class="mbar-val">6.92M</span><span class="dn" style="font-size:10px">-62.0%</span></div><div class="mbar"><span class="mbar-name" title="AF280 預防健檢中心(S2)">9. 預防健檢中心(S2)</span><div class="mbar-bg"><div class="mbar-fill" style="width:41.088011208657775%;background:var(--teal)"></div></div><span class="mbar-val">6.70M</span><span class="dn" style="font-size:10px">-64.9%</span></div><div class="mbar"><span class="mbar-name" title="A1530 腎臟內科">10. 腎臟內科</span><div class="mbar-bg"><div class="mbar-fill" style="width:36.5706489703002%;background:var(--teal)"></div></div><span class="mbar-val">5.97M</span><span class="dn" style="font-size:10px">-50.4%</span></div><div class="mbar"><span class="mbar-name" title="AA110 一般兒科">11. 一般兒科</span><div class="mbar-bg"><div class="mbar-fill" style="width:35.54543635595041%;background:var(--teal)"></div></div><span class="mbar-val">5.80M</span><span class="dn" style="font-size:10px">-66.0%</span></div><div class="mbar"><span class="mbar-name" title="A2110 一般外科">12. 一般外科</span><div class="mbar-bg"><div class="mbar-fill" style="width:29.822117237774%;background:var(--teal)"></div></div><span class="mbar-val">4.86M</span><span class="dn" style="font-size:10px">-49.5%</span></div><div class="mbar" style="color: var(--text3);"><span class="mbar-name">其他 (124科)</span><div class="mbar-bg"><div class="mbar-fill" style="width:368.3207561234208%;background:#9ca3af"></div></div><span class="mbar-val">60.08M</span></div></div>
       </div>
       <!-- 右：圓餅圖 -->
       <div>
@@ -3339,11 +3342,165 @@ function setupIpdKpi(){
 }
 
 // ═══════════════════════════════════════
+// 匯入 Excel / CSV 新資料
+// 來源欄位：年、月、季、門住別、來源別、科別、科系、drName、合計點數、人次、
+//           急性病床住院天數、慢性病床住院天數、住院人日
+// ═══════════════════════════════════════
+let importParsedTables = null;
+
+function showImportModal(){
+  importParsedTables = null;
+  var log=document.getElementById('import-log'); if(log) log.textContent='等待檔案選擇...';
+  var fn=document.getElementById('file-name-display'); if(fn) fn.textContent='';
+  var btn=document.getElementById('import-confirm-btn'); if(btn) btn.disabled=true;
+  document.getElementById('modal-overlay').classList.add('show');
+}
+function closeModal(){ document.getElementById('modal-overlay').classList.remove('show'); }
+
+function handleDrop(e){
+  e.preventDefault();
+  if(e.currentTarget && e.currentTarget.classList) e.currentTarget.classList.remove('drag');
+  var f=e.dataTransfer && e.dataTransfer.files[0]; if(f) readImportFile(f);
+}
+function handleFileSelect(e){ var f=e.target.files[0]; if(f) readImportFile(f); }
+
+function ilog(msg){ var el=document.getElementById('import-log'); if(el) el.textContent=msg; }
+
+function readImportFile(file){
+  var isCsv=/\.csv$/i.test(file.name);
+  var fnEl=document.getElementById('file-name-display'); if(fnEl) fnEl.textContent='📄 '+file.name+'（'+Math.round(file.size/1024)+'KB）';
+  ilog('讀取檔案中...');
+  var reader=new FileReader();
+  reader.onload=function(e){
+    try{
+      var wb = isCsv ? XLSX.read(e.target.result,{type:'string'})
+                     : XLSX.read(new Uint8Array(e.target.result),{type:'array'});
+      var rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]]);
+      ilog('解析中...共 '+rows.length.toLocaleString()+' 列');
+      importParsedTables = buildTablesFromRows(rows);
+      var t=importParsedTables;
+      if(!t.TREND_HISTORY.length){ ilog('❌ 找不到可用資料，請確認欄位包含「年、季、門住別、來源別、合計點數」等。'); return; }
+      ilog('✓ 解析完成：年季趨勢 '+t.TREND_HISTORY.length+'、月別 '+t.NHIS_MONTHLY.length+'、來源季 '+t.SRC_Q.length+'、科別季 '+t.DEPT_Q.length+'、醫師季 '+t.DR_Q.length+' 筆。請按「確認匯入」。');
+      var btn=document.getElementById('import-confirm-btn'); if(btn) btn.disabled=false;
+    }catch(err){ ilog('❌ 解析失敗：'+err.message); console.error('[Import]',err); }
+  };
+  reader.onerror=function(){ ilog('❌ 讀取檔案失敗'); };
+  if(isCsv) reader.readAsText(file,'utf-8'); else reader.readAsArrayBuffer(file);
+}
+
+function buildTablesFromRows(rows){
+  function num(v){ var n=parseFloat(v); return isNaN(n)?0:n; }
+  var R=[];
+  for(var i=0;i<rows.length;i++){
+    var r=rows[i];
+    var yr=parseInt(r['年'],10);
+    var q=String(r['季']||'').trim();
+    if(!yr || !/^Q[1-4]$/.test(q)) continue;
+    R.push({
+      yr:yr, q:q, mo:parseInt(r['月'],10)||0,
+      diag:String(r['門住別']||'').trim(), src:String(r['來源別']||'').trim(),
+      dept:String(r['科別']||'').trim(), sys:String(r['科系']||'').trim(),
+      dr:String(r['drName']||r['醫師']||'').trim(),
+      pts:num(r['合計點數']), cnt:num(r['人次']),
+      acu:num(r['急性病床住院天數']), chr:num(r['慢性病床住院天數']), ipd:num(r['住院人日'])
+    });
+  }
+  var qcmp=function(a,b){ return a.localeCompare(b); };
+
+  // TREND_HISTORY（一般服務）
+  var trend={};
+  R.forEach(function(r){ if(r.src!=='一般服務')return; var k=r.yr+'|'+r.q; (trend[k]=trend[k]||{op:0,ip:0}); if(r.diag==='門診')trend[k].op+=r.pts; else if(r.diag==='住院')trend[k].ip+=r.pts; });
+  var TREND=Object.keys(trend).map(function(k){ var p=k.split('|'),v=trend[k]; return {yr:+p[0],q:p[1],ip:+(v.ip/1e6).toFixed(2),op:+(v.op/1e6).toFixed(2),nhis:+((v.op+v.ip)/1e6).toFixed(2)}; }).sort(function(a,b){return a.yr-b.yr||qcmp(a.q,b.q);});
+
+  // NHIS_MONTHLY（一般服務，年/月/門住別）
+  var nm={};
+  R.forEach(function(r){ if(r.src!=='一般服務'||!r.mo)return; var k=r.yr+'|'+r.mo+'|'+r.diag; (nm[k]=nm[k]||{pts:0,cnt:0}); nm[k].pts+=r.pts; nm[k].cnt+=r.cnt; });
+  var NHISM=Object.keys(nm).map(function(k){ var p=k.split('|'),v=nm[k]; return {'年':+p[0],'月':+p[1],'門住別':p[2],'點數':Math.round(v.pts),'人次':v.cnt,'M':+(v.pts/1e6).toFixed(3)}; }).sort(function(a,b){return a['年']-b['年']||a['月']-b['月'];});
+
+  // SRC_Q（年/季/來源別）
+  var sq={};
+  R.forEach(function(r){ if(!r.src)return; var k=r.yr+'|'+r.q+'|'+r.src; (sq[k]=sq[k]||0); sq[k]+=r.pts; });
+  var SRCQ=Object.keys(sq).map(function(k){ var p=k.split('|'); return {'年':+p[0],'季':p[1],'來源別':p[2],'合計點數':Math.round(sq[k]),'M':+(sq[k]/1e6).toFixed(3)}; }).sort(function(a,b){return a['年']-b['年']||qcmp(a['季'],b['季']);});
+
+  // IPD_M / IPD_Q（急性/慢性病床住院天數）
+  var im={}, iq={};
+  R.forEach(function(r){ if(r.mo){var k=r.yr+'|'+r.mo;(im[k]=im[k]||{a:0,c:0});im[k].a+=r.acu;im[k].c+=r.chr;} var k2=r.yr+'|'+r.q;(iq[k2]=iq[k2]||{a:0,c:0});iq[k2].a+=r.acu;iq[k2].c+=r.chr; });
+  var IPDM=Object.keys(im).map(function(k){ var p=k.split('|'),v=im[k]; return {'年':+p[0],'月':+p[1],'急性':Math.round(v.a),'慢性':Math.round(v.c),'合計':Math.round(v.a+v.c)}; }).sort(function(a,b){return a['年']-b['年']||a['月']-b['月'];});
+  var IPDQ=Object.keys(iq).map(function(k){ var p=k.split('|'),v=iq[k]; return {'年':+p[0],'季':p[1],'急性':Math.round(v.a),'慢性':Math.round(v.c),'合計':Math.round(v.a+v.c)}; }).sort(function(a,b){return a['年']-b['年']||qcmp(a['季'],b['季']);});
+
+  // DEPT_Q（一般服務，年/季/科別/門住別）
+  var dq={};
+  R.forEach(function(r){ if(r.src!=='一般服務'||!r.dept)return; var k=r.yr+'|'+r.q+'|'+r.dept+'|'+r.diag; (dq[k]=dq[k]||{pts:0,cnt:0}); dq[k].pts+=r.pts; dq[k].cnt+=r.cnt; });
+  var DEPTQ=Object.keys(dq).map(function(k){ var p=k.split('|'),v=dq[k]; return {yr:+p[0],q:p[1],dept:p[2],diag:p[3],pts:Math.round(v.pts),cnt:Math.round(v.cnt)}; });
+
+  // DR_Q（一般服務，年/季/醫師/科別/科系/門住別）
+  var drq={};
+  R.forEach(function(r){ if(r.src!=='一般服務'||!r.dr)return; var k=[r.yr,r.q,r.dr,r.dept,r.sys,r.diag].join('|'); (drq[k]=drq[k]||{pts:0,cnt:0,ipd:0}); drq[k].pts+=r.pts; drq[k].cnt+=r.cnt; drq[k].ipd+=r.ipd; });
+  var DRQ=Object.keys(drq).map(function(k){ var p=k.split('|'),v=drq[k]; return {yr:+p[0],q:p[1],dr:p[2],dept:p[3],sys:p[4],diag:p[5],pts:Math.round(v.pts),cnt:Math.round(v.cnt),ipd:Math.round(v.ipd),losAvg:v.cnt>0?+(v.ipd/v.cnt).toFixed(1):0,ppv:v.cnt>0?Math.round(v.pts/v.cnt):0}; });
+
+  // SF_DEPT（自費，年/季/科別）
+  var sf={};
+  R.forEach(function(r){ if(r.src!=='自費'||!r.dept)return; var k=r.yr+'|'+r.q+'|'+r.dept; (sf[k]=sf[k]||0); sf[k]+=r.pts; });
+  var SFDEPT=Object.keys(sf).map(function(k){ var p=k.split('|'); return {yr:+p[0],q:p[1],dept:p[2],pts:Math.round(sf[k]),ptsM:+(sf[k]/1e6).toFixed(4)}; });
+
+  return {TREND_HISTORY:TREND,NHIS_MONTHLY:NHISM,SRC_Q:SRCQ,IPD_M:IPDM,IPD_Q:IPDQ,DEPT_Q:DEPTQ,DR_Q:DRQ,SF_DEPT:SFDEPT};
+}
+
+// 以匯入資料就地取代各資料表（維持 const 參照，只換內容）
+function applyTables(t){
+  var map={TREND_HISTORY:TREND_HISTORY,NHIS_MONTHLY:NHIS_MONTHLY,SRC_Q:SRC_Q,IPD_M:IPD_M,IPD_Q:IPD_Q,DEPT_Q:DEPT_Q,DR_Q:DR_Q,SF_DEPT:SF_DEPT};
+  Object.keys(map).forEach(function(name){ if(t[name]&&t[name].length){ var arr=map[name]; arr.length=0; t[name].forEach(function(x){arr.push(x);}); } });
+}
+
+function confirmImport(){
+  if(!importParsedTables){ alert('請先選擇檔案並完成解析'); return; }
+  applyTables(importParsedTables);
+  try{ localStorage.setItem('smh_imported_data', JSON.stringify(importParsedTables)); }catch(e){ console.warn('匯入資料存本機失敗（可能過大）',e); }
+  closeModal();
+  updateAllHeaders();
+  refreshAllPages();
+  var doSync = !!localStorage.getItem('smh_github_token') &&
+    confirm('✓ 匯入完成，資料已更新（本瀏覽器立即生效）。\n\n是否同步到共用檔案，讓所有人開啟或下次重開都看得到？\n（資料量較大，上傳需數秒）');
+  if(doSync){ syncDataToGithub(); }
+  else { alert('✓ 匯入完成。\n※ 目前僅存在此瀏覽器；若要讓所有人／重開後都看得到，請設定 GitHub Token 後再匯入一次並選擇同步。'); }
+}
+
+// 開啟時載入本機曾匯入的資料
+function loadImportedData(){
+  try{ var j=localStorage.getItem('smh_imported_data'); if(j){ applyTables(JSON.parse(j)); } }catch(e){ console.warn('載入本機匯入資料失敗',e); }
+}
+
+// 還原內建示範資料（清除本機匯入）
+function loadDemoData(){
+  if(localStorage.getItem('smh_imported_data')){
+    if(!confirm('確定要清除本機匯入的資料、還原為內建示範資料？')) return;
+    localStorage.removeItem('smh_imported_data');
+    location.reload();
+  }
+  // 未曾匯入 → 目前即內建資料，僅關閉視窗
+}
+
+// 將匯入後的各資料表寫回共用檔案（GitHub 重寫 const 陣列）
+function syncDataToGithub(){
+  var html='<!DOCTYPE html>\n'+document.documentElement.outerHTML;
+  var arrs={TREND_HISTORY:TREND_HISTORY,NHIS_MONTHLY:NHIS_MONTHLY,SRC_Q:SRC_Q,IPD_M:IPD_M,IPD_Q:IPD_Q,DEPT_Q:DEPT_Q,DR_Q:DR_Q,SF_DEPT:SF_DEPT};
+  var names=Object.keys(arrs), miss=[];
+  names.forEach(function(name){
+    var re=new RegExp('const '+name+'\\s*=\\s*\\[[\\s\\S]*?\\];');
+    if(re.test(html)) html=html.replace(re, 'const '+name+' = '+JSON.stringify(arrs[name])+';');
+    else miss.push(name);
+  });
+  if(miss.length){ alert('❌ 找不到資料區塊：'+miss.join('、')+'，取消同步'); return; }
+  pushHtmlToGithub(html, '更新小總額資料（匯入）'+new Date().toLocaleDateString('zh-TW'));
+}
+
+// ═══════════════════════════════════════
 // 初始化
 // ═══════════════════════════════════════
 window.addEventListener('load',function(){
   try {
     loadSavedBases();
+    loadImportedData();
     updateAllHeaders();
     // 確認 Chart.js 已載入
     if(typeof Chart === 'undefined'){
