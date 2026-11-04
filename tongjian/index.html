@@ -6,7 +6,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
 <style>
-/* Layout: 單欄卷軸 — 頂部提問台，下接錦囊答覆，最下為十九則故事書架 */
+/* Layout: 單欄卷軸 — 頂部提問台，下接錦囊答覆，最下為二十則故事書架 */
 :root{
   --bg:#eef2ef; --surface:#ffffff; --ink:#1b2420; --muted:#56635d; --line:#d3dcd7;
   --accent:#2a6a5c; --accent-ink:#ffffff; --accent-soft:#e0ece7; --seal:#ad3a2d; --warn:#8a5a00; --warn-soft:#fbf1dc;
@@ -91,7 +91,7 @@ footer{font-size:12.5px;color:var(--muted)}
     <div class="seal" aria-hidden="true"><span>資</span><span>治</span><span>通</span><span>鑑</span></div>
     <div>
       <h1>通鑑職場錦囊</h1>
-      <p class="sub">把你的職場難題說出來，從《資治通鑑》十九則故事裡找出對應的處世之道</p>
+      <p class="sub">把你的職場難題說出來，從《資治通鑑》二十則故事裡找出對應的處世之道</p>
     </div>
   </header>
 
@@ -113,7 +113,7 @@ footer{font-size:12.5px;color:var(--muted)}
 
   <section style="display:grid;gap:14px" aria-labelledby="shelf-h">
     <div class="shelf-head">
-      <h2 id="shelf-h">十九則通鑑故事</h2>
+      <h2 id="shelf-h">二十則通鑑故事</h2>
       <span class="hint">依情境篩選，點開看故事與職場用法</span>
     </div>
     <div class="chips" id="filters"></div>
@@ -278,7 +278,15 @@ const STORIES = [
   actions:["一對一聽組員的擔心，不急著反駁","用具體行動表達信任：授權、讓他負責一塊","主管親自到現場，讓團隊看見你在"],
   avoid:["用加強監控或威脅壓住情緒","在背後議論鬧情緒的組員"],
   script:"最近大家壓力很大，我想先聽聽你最擔心的是什麼，我能幫上的一定處理。",
-  kw:["鬧情緒","抱怨","不安","士氣","負能量","不信任","人心","低落","消極","心情不好","合併","被併","新成員","不開心","哭"]}
+  kw:["鬧情緒","抱怨","不安","士氣","負能量","不信任","人心","低落","消極","心情不好","合併","被併","新成員","不開心","哭"]},
+ {id:"tuomian",title:"唾面自乾",src:"唐紀・武后長壽二年",cat:["同事協作","職涯成長"],
+  story:"婁師德的弟弟出任代州刺史，臨行前婁師德問他：「我們兄弟都受重用，招人嫉妒，你打算怎麼自處？」弟弟說：「就算有人往我臉上吐口水，我擦掉就是。」婁師德說：「這正是我擔心的。別人吐你，是因為生氣；你當面擦掉，反而顯得不服，讓他更氣。口水不擦也會自己乾，笑著承受就好。」",
+  quote:"唾不拭自乾，當笑而受之。",
+  lesson:"別人的冷淡或不友善，先別急著對號入座或反擊；穩住自己的情緒，讓時間和表現慢慢化解。",
+  actions:["先別對號入座：大家安靜，可能只是話題不方便讓你聽","照顧自己的情緒，下班後找信任的人聊聊","用小互動慢慢拉近距離，例如分享點心、約一次午餐","專注把工作做好，讓相處建立在合作上"],
+  avoid:["當場追問「你們剛剛在說什麼」","把冷淡全歸咎於自己而自我否定"],
+  script:"我帶了點心，大家休息一下一起吃吧！",
+  kw:["不說話","冷落","小圈圈","融入","孤立","被孤立","心情","調適","不理我","安靜","不找我","不約我","被討厭","在意別人","玻璃心","聊天","排擠"]}
 ];
 
 const CAT_HINTS = {

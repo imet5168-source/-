@@ -153,7 +153,15 @@ const STORIES = [
   actions:["一對一聽組員的擔心，不急著反駁","用具體行動表達信任：授權、讓他負責一塊","主管親自到現場，讓團隊看見你在"],
   avoid:["用加強監控或威脅壓住情緒","在背後議論鬧情緒的組員"],
   script:"最近大家壓力很大，我想先聽聽你最擔心的是什麼，我能幫上的一定處理。",
-  kw:["鬧情緒","抱怨","不安","士氣","負能量","不信任","人心","低落","消極","心情不好","合併","被併","新成員","不開心","哭"]}
+  kw:["鬧情緒","抱怨","不安","士氣","負能量","不信任","人心","低落","消極","心情不好","合併","被併","新成員","不開心","哭"]},
+ {id:"tuomian",title:"唾面自乾",src:"唐紀・武后長壽二年",cat:["同事協作","職涯成長"],
+  story:"婁師德的弟弟出任代州刺史，臨行前婁師德問他：「我們兄弟都受重用，招人嫉妒，你打算怎麼自處？」弟弟說：「就算有人往我臉上吐口水，我擦掉就是。」婁師德說：「這正是我擔心的。別人吐你，是因為生氣；你當面擦掉，反而顯得不服，讓他更氣。口水不擦也會自己乾，笑著承受就好。」",
+  quote:"唾不拭自乾，當笑而受之。",
+  lesson:"別人的冷淡或不友善，先別急著對號入座或反擊；穩住自己的情緒，讓時間和表現慢慢化解。",
+  actions:["先別對號入座：大家安靜，可能只是話題不方便讓你聽","照顧自己的情緒，下班後找信任的人聊聊","用小互動慢慢拉近距離，例如分享點心、約一次午餐","專注把工作做好，讓相處建立在合作上"],
+  avoid:["當場追問「你們剛剛在說什麼」","把冷淡全歸咎於自己而自我否定"],
+  script:"我帶了點心，大家休息一下一起吃吧！",
+  kw:["不說話","冷落","小圈圈","融入","孤立","被孤立","心情","調適","不理我","安靜","不找我","不約我","被討厭","在意別人","玻璃心","聊天","排擠"]}
 ];
 
 const CAT_HINTS = {
@@ -172,7 +180,10 @@ const SENSITIVE = ["pua","精神暴力","人身攻擊","霸凌","性騷擾","騷
 /**
  * 通鑑職場錦囊 LINE 機器人（Google Apps Script）
  * 設定步驟見同資料夾 README.md。
- * 指令碼屬性需設定：LINE_CHANNEL_ACCESS_TOKEN
+ * 指令碼屬性：
+ *   LINE_CHANNEL_ACCESS_TOKEN（必填）
+ *   ANTHROPIC_API_KEY（選填：設定後由 Claude AI 理解問題；未設定則用關鍵字比對）
+ *   AI_DAILY_LIMIT（選填：每日 AI 回答上限，預設 200 題，超過自動改用關鍵字比對）
  */
 
 const COLOR = { accent: "#2A6A5C", seal: "#AD3A2D", ink: "#1B2420", muted: "#56635D", soft: "#E0ECE7", warn: "#8A5A00", warnSoft: "#FBF1DC" };
@@ -209,6 +220,8 @@ function route(text) {
   const hit = STORIES.filter(function (s) { return s.title === title; })[0];
   if (hit) return adviceMessages(hit, "這則故事屬於「" + hit.cat.join("、") + "」情境。", relatedFor(hit, []), false);
   if (GREETINGS.test(text)) return helpMessages(false);
+  const ai = aiAdvice(text);
+  if (ai) return ai;
   const a = analyse(text);
   if (!a.scored.length) return fallbackMessages(a.topCats, a.sensitive);
   const main = a.scored[0].s;
@@ -271,7 +284,10 @@ function section(label, contents) {
     contents: [txt(label, { size: "xs", color: COLOR.muted, weight: "bold" })].concat(contents) };
 }
 
-function adviceBubble(s, diag) {
+function adviceBubble(s, diag, o) {
+  o = o || {};
+  const extra = o.bridge ? [section("對照你的處境", [txt(o.bridge)])] : [];
+  const foot = o.ai ? [txt("由 Claude AI 依你的描述分析，僅供參考", { size: "xxs", color: COLOR.muted, margin: "lg", align: "end" })] : [];
   return {
     type: "bubble", size: "giga",
     header: { type: "box", layout: "vertical", spacing: "xs", paddingBottom: "none", contents: [
@@ -283,12 +299,13 @@ function adviceBubble(s, diag) {
       txt(s.story, { margin: "md", color: COLOR.muted }),
       txt("「" + s.quote.replace(/[「」]/g, "") + "」", { margin: "sm", weight: "bold", color: COLOR.seal }),
       { type: "box", layout: "vertical", margin: "md", paddingAll: "md", cornerRadius: "md", backgroundColor: COLOR.soft,
-        contents: [txt("啟示：" + s.lesson)] },
-      section("建議這樣做", bullets(s.actions, "✓", COLOR.accent)),
-      section("避免", bullets(s.avoid, "✕", COLOR.seal)),
+        contents: [txt("啟示：" + s.lesson)] }
+    ].concat(extra, [
+      section("建議這樣做", bullets(o.actions || s.actions, "✓", COLOR.accent)),
+      section("避免", bullets(o.avoid || s.avoid, "✕", COLOR.seal)),
       section("可以這樣說", [{ type: "box", layout: "vertical", paddingAll: "md", cornerRadius: "md", borderWidth: "1px", borderColor: "#D3DCD7",
-        contents: [txt("「" + s.script + "」")] }])
-    ] }
+        contents: [txt("「" + (o.script || s.script) + "」")] }])
+    ], foot) }
   };
 }
 
@@ -332,7 +349,131 @@ function categoryMessages(cat) {
 function helpMessages(isWelcome) {
   const head = isWelcome ? "歡迎使用「通鑑職場錦囊」！\n\n" : "";
   return [withQuick({ type: "text", text: head +
-    "直接用一兩句話描述你的職場狀況，例如：\n・剛升主管，原本的同事不太服我\n・同事在背後說我壞話\n・提案在會議上被否決\n\n我會從《資治通鑑》19 則故事中找出最對應的一則，給你行動建議和可以直接說的話。\n\n也可以點下方按鈕，依情境瀏覽故事。" })];
+    "直接用一兩句話描述你的職場狀況，例如：\n・剛升主管，原本的同事不太服我\n・同事在背後說我壞話\n・提案在會議上被否決\n\n我會從《資治通鑑》20 則故事中找出最對應的一則，給你行動建議和可以直接說的話。\n\n也可以點下方按鈕，依情境瀏覽故事。" })];
+}
+
+/* ---------- Claude AI（Haiku 5.5） ---------- */
+const AI_MODEL = "claude-haiku-5-5";
+
+function aiAdvice(text) {
+  try {
+    const props = PropertiesService.getScriptProperties();
+    const key = props.getProperty("ANTHROPIC_API_KEY");
+    if (!key || !takeQuota(props)) return null;
+    const res = UrlFetchApp.fetch("https://api.anthropic.com/v1/messages", {
+      method: "post", contentType: "application/json", muteHttpExceptions: true,
+      headers: { "x-api-key": key, "anthropic-version": "2026-10-21" },
+      payload: JSON.stringify({
+        model: AI_MODEL,
+        max_tokens: 4000,
+        system: aiSystemPrompt(),
+        output_config: { effort: "low", format: { type: "json_schema", schema: aiSchema() } },
+        messages: [{ role: "user", content: text.slice(0, 1500) }]
+      })
+    });
+    const code = res.getResponseCode();
+    const data = JSON.parse(res.getContentText());
+    if (code !== 200) { console.error("Claude API " + code + ": " + JSON.stringify(data.error || data)); return null; }
+    if (data.stop_reason !== "end_turn") { console.warn("Claude stop_reason: " + data.stop_reason); return null; }
+    const block = (data.content || []).filter(function (b) { return b.type === "text"; })[0];
+    if (!block) return null;
+    return aiMessages(JSON.parse(block.text), text);
+  } catch (err) {
+    console.error(err);
+    return null;
+  }
+}
+
+function takeQuota(props) {
+  const limit = Number(props.getProperty("AI_DAILY_LIMIT")) || 200;
+  const today = Utilities.formatDate(new Date(), "Asia/Taipei", "yyyy-MM-dd");
+  let q = {};
+  try { q = JSON.parse(props.getProperty("AI_QUOTA") || "{}"); } catch (e) { q = {}; }
+  if (q.date !== today) q = { date: today, count: 0 };
+  if (q.count >= limit) return false;
+  q.count += 1;
+  props.setProperty("AI_QUOTA", JSON.stringify(q));
+  return true;
+}
+
+function aiSystemPrompt() {
+  const lib = STORIES.map(function (s) {
+    return s.id + "｜" + s.title + "｜" + s.cat.join("/") + "｜" + s.story + "｜啟示：" + s.lesson;
+  }).join("\n");
+  return [
+    "你是熟讀《資治通鑑》的資深職場顧問，在 LINE 上回答台灣上班族的職場問題。",
+    "任務：理解使用者的處境，包括人際、溝通、情緒、心情調適、壓力、職涯、帶人、向上管理等任何職場問題。從故事庫選出道理最能套用的一則故事；即使表面情節不同，也要說清楚故事的道理怎麼用在他的處境。",
+    "規則：",
+    "- 只能使用故事庫裡的故事，不要編造或補充故事庫以外的歷史細節。",
+    "- 建議要具體、可執行，符合現代職場倫理與台灣的工作環境。語氣溫和、專業、簡潔，使用繁體中文。",
+    "- situation：兩句內點出問題核心，並同理他的感受（60 字內）。",
+    "- bridge：2 到 3 句說明故事和他處境的對應（100 字內）。",
+    "- actions：3 到 4 條具體行動，每條 30 字內。avoid：2 條，每條 25 字內。",
+    "- script：一句他可以直接說出口的話（40 字內）。",
+    "- related_ids：另外 1 到 2 則也值得參考的故事。",
+    "- sensitive：涉及霸凌、騷擾、歧視、違法或身心健康危機時為 true。",
+    "- workplace：問題和工作、職場、同事、主管、職涯都無關時為 false（其他欄位仍要填，可以很簡短）。",
+    "",
+    "故事庫（id｜標題｜類別｜故事｜啟示）：",
+    lib
+  ].join("\n");
+}
+
+function aiSchema() {
+  const ids = STORIES.map(function (s) { return s.id; });
+  const strArr = { type: "array", items: { type: "string" } };
+  return {
+    type: "object", additionalProperties: false,
+    required: ["workplace", "situation", "story_id", "related_ids", "bridge", "actions", "avoid", "script", "sensitive"],
+    properties: {
+      workplace: { type: "boolean" },
+      situation: { type: "string" },
+      story_id: { type: "string", enum: ids },
+      related_ids: { type: "array", items: { type: "string", enum: ids } },
+      bridge: { type: "string" },
+      actions: strArr,
+      avoid: strArr,
+      script: { type: "string" },
+      sensitive: { type: "boolean" }
+    }
+  };
+}
+
+function aiMessages(r, text) {
+  if (r.workplace === false) {
+    return [withQuick({ type: "text", text: "這個問題好像和職場比較沒關係 😊\n\n我專門回答工作上的人際、溝通和心情問題，例如：\n・同事把工作都丟給我\n・主管當眾罵我\n・大家聊天，我一靠近就安靜了\n\n歡迎描述你在工作上遇到的狀況。" })];
+  }
+  const s = byId[r.story_id];
+  if (!s) return null;
+  const clean = function (v, fb, n) {
+    const a = (Array.isArray(v) ? v : []).map(String).filter(function (x) { return x.trim(); }).slice(0, n);
+    return a.length ? a : fb;
+  };
+  const str = function (v, fb) { v = String(v || "").trim(); return v || fb; };
+  const relatedIds = clean(r.related_ids, [], 2).filter(function (id) { return byId[id] && id !== s.id; });
+  const sensitive = r.sensitive === true || SENSITIVE.some(function (w) { return text.toLowerCase().indexOf(w) >= 0; });
+  const msgs = [];
+  if (sensitive) msgs.push({ type: "text", text: SENS_TEXT });
+  msgs.push(withQuick({
+    type: "flex", altText: "通鑑錦囊：" + s.title + "－" + s.lesson,
+    contents: adviceBubble(s, str(r.situation, s.lesson), {
+      ai: true,
+      bridge: str(r.bridge, ""),
+      actions: clean(r.actions, s.actions, 4),
+      avoid: clean(r.avoid, s.avoid, 2),
+      script: str(r.script, s.script)
+    })
+  }, relatedFor(s, relatedIds)));
+  return msgs;
+}
+
+/* 在 Apps Script 編輯器選 testAI 按「執行」：直接呼叫 Claude，檢查金鑰與回覆 */
+function testAI() {
+  const q = "我在辦公室時大家聊天很開心，我一回來大家馬上都不說話了，我要怎麼調整自己的心情";
+  const props = PropertiesService.getScriptProperties();
+  if (!props.getProperty("ANTHROPIC_API_KEY")) { console.log("尚未設定 ANTHROPIC_API_KEY"); return; }
+  const out = aiAdvice(q);
+  console.log(out ? "AI 回覆成功：\n" + JSON.stringify(out, null, 1).slice(0, 3000) : "AI 沒有回覆，請看上方錯誤訊息（已改用關鍵字比對）");
 }
 
 /* ---------- 呼叫 LINE API ---------- */
