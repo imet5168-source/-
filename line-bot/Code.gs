@@ -443,6 +443,10 @@ STORIES.forEach(function (s) { byId[s.id] = s; });
 
 /* ---------- LINE 入口 ---------- */
 function doPost(e) {
+  if (!e || !e.postData) {
+    console.log("doPost 由 LINE 自動呼叫，不能在編輯器直接執行。測試請在上方選 testAI（AI）或 testRoute（關鍵字比對）。");
+    return ContentService.createTextOutput("OK");
+  }
   const body = JSON.parse(e.postData.contents);
   (body.events || []).forEach(function (ev) {
     try { handleEvent(ev); } catch (err) { console.error(err); }
