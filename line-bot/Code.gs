@@ -456,7 +456,7 @@ function doPost(e) {
 
 function handleEvent(ev) {
   if (!ev.replyToken) return;
-  if (ev.type === "follow") return reply(ev.replyToken, helpMessages(true));
+  if (ev.type === "follow") return reply(ev.replyToken, welcomeMessages(displayName(ev.source && ev.source.userId)));
   if (ev.type !== "message" || ev.message.type !== "text") {
     return reply(ev.replyToken, [withQuick({ type: "text", text: "請用文字描述你在職場遇到的狀況，我會從《資治通鑑》裡找對應的故事給你建議。" })]);
   }
@@ -465,13 +465,13 @@ function handleEvent(ev) {
 
 /* ---------- 路由（純函式，可離線測試） ---------- */
 function route(text) {
-  if (!text || HELP_WORDS.indexOf(text.toLowerCase()) >= 0) return helpMessages(false);
+  if (!text || HELP_WORDS.indexOf(text.toLowerCase()) >= 0) return helpMessages();
   if (CATS.indexOf(text) >= 0) return categoryMessages(text);
   const m = text.match(/^看[:：\s]*(.+)$/);
   const title = m ? m[1].trim() : text;
   const hit = STORIES.filter(function (s) { return s.title === title; })[0];
   if (hit) return adviceMessages(hit, "這則故事屬於「" + hit.cat.join("、") + "」情境。", relatedFor(hit, []), false);
-  if (GREETINGS.test(text)) return helpMessages(false);
+  if (GREETINGS.test(text)) return helpMessages();
   const ai = aiAdvice(text);
   if (ai) return ai;
   const a = analyse(text);
@@ -610,10 +610,65 @@ function categoryMessages(cat) {
   return [withQuick({ type: "flex", altText: "「" + cat + "」相關的通鑑故事", contents: { type: "carousel", contents: carouselCards(cat, list) } })];
 }
 
-function helpMessages(isWelcome) {
-  const head = isWelcome ? "歡迎使用「通鑑職場錦囊」！\n\n" : "";
-  return [withQuick({ type: "text", text: head +
-    "直接用一兩句話描述你的職場狀況，例如：\n・剛升主管，原本的同事不太服我\n・同事在背後說我壞話\n・提案在會議上被否決\n\n我會從《資治通鑑》51 則故事中找出最對應的一則，給你行動建議和可以直接說的話。\n\n也可以點下方按鈕，依情境瀏覽故事。" })];
+function aiEnabled() {
+  try { return !!PropertiesService.getScriptProperties().getProperty("ANTHROPIC_API_KEY"); } catch (e) { return false; }
+}
+
+/* 取得使用者的 LINE 顯示名稱（失敗時回傳空字串） */
+function displayName(userId) {
+  if (!userId) return "";
+  try {
+    const token = PropertiesService.getScriptProperties().getProperty("LINE_CHANNEL_ACCESS_TOKEN");
+    const res = UrlFetchApp.fetch("https://api.line.me/v2/bot/profile/" + encodeURIComponent(userId), {
+      headers: { Authorization: "Bearer " + token }, muteHttpExceptions: true
+    });
+    if (!res || res.getResponseCode() !== 200) return "";
+    return String(JSON.parse(res.getContentText()).displayName || "");
+  } catch (e) {
+    return "";
+  }
+}
+
+/* 加入好友時的歡迎訊息：目的、能得到什麼、怎麼用 */
+function welcomeMessages(name) {
+  const hello = name ? name + " 您好，歡迎使用《通鑑職場錦囊》📜" : "您好，歡迎使用《通鑑職場錦囊》📜";
+  const note = aiEnabled()
+    ? "※ 提問會交由 AI 分析，請勿輸入個資或公司機密。涉及霸凌、騷擾等狀況，請同時尋求人資或專業協助。"
+    : "※ 涉及霸凌、騷擾等狀況，請同時尋求人資或專業協助。";
+  return [withQuick({ type: "text", text: [
+    hello,
+    "",
+    "這是職場人際諮詢小幫手。說出你在工作上遇到的難題，我會從《資治通鑑》" + STORIES.length + " 則歷史故事中，找出最能對照的一則，給你：",
+    "✅ 情境判讀",
+    "✅ 具體可行的建議",
+    "✅ 一句可以直接說出口的話",
+    "",
+    "【怎麼用】",
+    "1️⃣ 直接打字描述狀況，越具體越準，例如：",
+    "・剛升主管，同事不太服我",
+    "・同事把工作都丟給我",
+    "・大家聊天，我一靠近就安靜了",
+    "2️⃣ 點下方按鈕，依情境瀏覽故事",
+    "3️⃣ 隨時輸入「選單」再看一次說明",
+    "",
+    note
+  ].join("\n") })];
+}
+
+/* 「選單」「說明」與打招呼時的使用說明（較精簡） */
+function helpMessages() {
+  return [withQuick({ type: "text", text: [
+    "【通鑑職場錦囊 使用說明】",
+    "",
+    "1️⃣ 直接描述你的職場狀況，例如：",
+    "・主管當眾罵我，我該怎麼辦",
+    "・組員一直鬧情緒",
+    "・學弟升官了，我很不甘心",
+    "2️⃣ 點下方按鈕，依情境瀏覽故事",
+    "3️⃣ 輸入「看：故事名稱」直接看某則故事（例如：看：將相和）",
+    "",
+    "我會從《資治通鑑》" + STORIES.length + " 則故事中，找出最能對照的一則給你建議。"
+  ].join("\n") })];
 }
 
 /* ---------- Claude AI（Haiku 5.5） ---------- */

@@ -41,7 +41,7 @@
 2. 到 LINE Official Account Manager →「設定 → 回應設定」：
    - 「Webhook」開啟
    - 「自動回應訊息」關閉（避免和機器人重複回覆）
-   - 「加入好友的歡迎訊息」可關閉（機器人會自己送歡迎訊息）
+   - 「加入好友的歡迎訊息」**關閉**（機器人會自己送出含使用說明的歡迎訊息，並稱呼對方名字）
 3. 用手機 LINE 掃 Developers Console 上的 QR code 加好友，傳一句話測試。
 
 ## 選用：接上 Claude AI（Haiku 5.5）
