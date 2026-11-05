@@ -1,0 +1,756 @@
+<!doctype html>
+<html lang="zh-TW"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body style="margin:0">
+<title>通鑑職場錦囊</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;900&display=swap">
+<style>
+/* Layout: 單欄卷軸 — 頂部提問台，下接錦囊答覆，最下為五十一則故事書架 */
+:root{
+  --bg:#eef2ef; --surface:#ffffff; --ink:#1b2420; --muted:#56635d; --line:#d3dcd7;
+  --accent:#2a6a5c; --accent-ink:#ffffff; --accent-soft:#e0ece7; --seal:#ad3a2d; --warn:#8a5a00; --warn-soft:#fbf1dc;
+  --f-display:"Noto Serif TC","Songti TC","PMingLiU",serif;
+  --f-body:"Noto Sans TC","PingFang TC","Microsoft JhengHei",system-ui,sans-serif;
+  --r:10px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#111715; --surface:#19211e; --ink:#e4ebe7; --muted:#9caba4; --line:#2b3733;
+  --accent:#72b9a7; --accent-ink:#0d1a16; --accent-soft:#1d332d; --seal:#e06a5c; --warn:#e9b65c; --warn-soft:#2d2514; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#111715; --surface:#19211e; --ink:#e4ebe7; --muted:#9caba4; --line:#2b3733;
+  --accent:#72b9a7; --accent-ink:#0d1a16; --accent-soft:#1d332d; --seal:#e06a5c; --warn:#e9b65c; --warn-soft:#2d2514; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.75}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 64px;display:grid;gap:28px}
+header{display:flex;gap:18px;align-items:center}
+.seal{flex:none;width:58px;height:58px;border:2.5px solid var(--seal);color:var(--seal);border-radius:6px;display:grid;grid-template-columns:1fr 1fr;place-items:center;font-family:var(--f-display);font-weight:900;font-size:19px;line-height:1;padding:5px;transform:rotate(-4deg)}
+h1{font-family:var(--f-display);font-weight:900;font-size:clamp(26px,5vw,36px);margin:0;letter-spacing:.06em;line-height:1.25;text-wrap:balance}
+.sub{margin:2px 0 0;color:var(--muted);font-size:14px}
+h2{font-family:var(--f-display);font-weight:900;font-size:21px;margin:0;letter-spacing:.04em}
+h3{font-family:var(--f-display);font-weight:600;font-size:17px;margin:0}
+.label{font-size:12px;letter-spacing:.12em;color:var(--muted);font-weight:700}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;gap:14px}
+textarea{width:100%;min-height:104px;resize:vertical;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px 14px;line-height:1.7}
+textarea:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.chip:hover{border-color:var(--accent);color:var(--accent)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.actions{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.btn{font:inherit;font-weight:700;border-radius:8px;padding:9px 18px;cursor:pointer;border:1px solid var(--accent)}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent)}
+.btn:disabled{opacity:.55;cursor:wait}
+.hint{font-size:12.5px;color:var(--muted)}
+.result{display:grid;gap:16px}
+.status{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.pill{font-size:12px;font-weight:700;border-radius:999px;padding:2px 10px;background:var(--accent-soft);color:var(--accent)}
+.pill.ai{background:var(--seal);color:var(--surface)}
+.diag{font-size:16px;margin:0}
+.story{border-left:3px solid var(--seal);padding:4px 0 4px 16px;display:grid;gap:8px}
+.src{font-size:12.5px;color:var(--seal);font-weight:700;letter-spacing:.06em}
+.story h3{font-size:22px;font-weight:900}
+.story p{margin:0}
+.quote{font-family:var(--f-display);font-weight:600;color:var(--muted)}
+.lesson{background:var(--accent-soft);border-radius:8px;padding:10px 14px}
+.bridge{margin:0}
+.cols{display:grid;grid-template-columns:3fr 2fr;gap:18px}
+.cols>div{min-width:0;display:grid;gap:8px;align-content:start}
+ul.do,ul.dont{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+ul.do li,ul.dont li{padding-left:26px;position:relative}
+ul.do li::before{content:"行";position:absolute;left:0;top:2px;font-size:11px;font-weight:700;width:19px;height:19px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;line-height:1}
+ul.dont li::before{content:"忌";position:absolute;left:0;top:2px;font-size:11px;font-weight:700;width:19px;height:19px;border-radius:50%;border:1.5px solid var(--seal);color:var(--seal);display:grid;place-items:center;line-height:1}
+.script{display:flex;gap:12px;align-items:flex-start;border:1px dashed var(--line);border-radius:8px;padding:12px 14px}
+.script p{margin:0;flex:1;min-width:0}
+.copy{font:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:6px;padding:2px 10px;cursor:pointer;flex:none}
+.note{background:var(--warn-soft);color:var(--warn);border-radius:8px;padding:10px 14px;font-size:14px}
+.related{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px}
+.rel{text-align:left;font:inherit;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px 12px;cursor:pointer;display:grid;gap:2px}
+.rel:hover{border-color:var(--accent)}
+.rel b{font-family:var(--f-display);font-size:15.5px}
+.rel span{font-size:13px;color:var(--muted)}
+.shelf-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.shelf{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+details.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+details.card summary{cursor:pointer;list-style:none;display:grid;gap:4px}
+details.card summary::-webkit-details-marker{display:none}
+details.card summary h3{font-weight:900}
+details.card .meta{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+details.card .body{display:grid;gap:8px;margin-top:10px;font-size:14px}
+details.card .body p{margin:0}
+.tag{font-size:11.5px;border:1px solid var(--line);border-radius:4px;padding:0 6px;color:var(--muted)}
+.thinking{color:var(--muted);font-style:normal}
+footer{font-size:12.5px;color:var(--muted)}
+@media (max-width:620px){.cols{grid-template-columns:1fr}.panel{padding:16px}}
+@media (prefers-reduced-motion:no-preference){.result{animation:rise .35s ease-out}@keyframes rise{from{transform:translateY(6px)}to{transform:none}}}
+</style>
+
+<div class="wrap">
+  <header>
+    <div class="seal" aria-hidden="true"><span>資</span><span>治</span><span>通</span><span>鑑</span></div>
+    <div>
+      <h1>通鑑職場錦囊</h1>
+      <p class="sub">把你的職場難題說出來，從《資治通鑑》五十一則故事裡找出對應的處世之道</p>
+    </div>
+  </header>
+
+  <section class="panel" aria-labelledby="ask-h">
+    <h2 id="ask-h">你遇到什麼狀況？</h2>
+    <textarea id="q" aria-label="描述你的職場狀況" placeholder="例：我剛升主管，原本的同事好像不太服我……"></textarea>
+    <div>
+      <div class="label" style="margin-bottom:6px">常見情境，點一下帶入</div>
+      <div class="chips" id="examples"></div>
+    </div>
+    <div class="actions">
+      <button class="btn primary" id="ask">查錦囊</button>
+      <button class="btn ghost" id="askAi" hidden>請 Claude 深入分析</button>
+      <span class="hint" id="aiHint">「查錦囊」立即比對內建故事。</span>
+    </div>
+  </section>
+
+  <section class="panel result" id="result" aria-live="polite"></section>
+
+  <section style="display:grid;gap:14px" aria-labelledby="shelf-h">
+    <div class="shelf-head">
+      <h2 id="shelf-h">五十一則通鑑故事</h2>
+      <span class="hint">依情境篩選，點開看故事與職場用法</span>
+    </div>
+    <div class="chips" id="filters"></div>
+    <div class="shelf" id="shelf"></div>
+  </section>
+
+  <footer>故事摘自司馬光《資治通鑑》各紀，文字經白話節錄。建議僅供參考；涉及職場霸凌、性騷擾、違法或身心健康問題，請尋求人資、法律或專業諮詢協助。</footer>
+</div>
+
+<script>
+const CATS = ["向上管理","同事協作","衝突化解","帶領團隊","推動變革","功勞名聲","危機壓力","職涯成長"];
+
+const STORIES = [
+ {id:"jianting",title:"兼聽則明",src:"唐紀・太宗貞觀二年",cat:["衝突化解","帶領團隊"],
+  story:"唐太宗問魏徵：「君主怎樣才能明察，怎樣會昏暗？」魏徵答：「兼聽則明，偏信則暗。」並舉秦二世只信趙高、終致亡國為例。太宗深以為然。",
+  quote:"兼聽則明，偏信則暗。",
+  lesson:"做判斷前聽多方說法，別讓第一個來找你的人替你定調。",
+  actions:["分別找當事人一對一了解，不在群組裡問","把「事實」和「個人解讀」分開記下來","下結論前，找一位立場不同的人挑戰你的看法"],
+  avoid:["聽完一方就公開表態","把轉述的話當成原話"],
+  script:"這件事我想先分別聽聽兩邊怎麼看，週四前整理好再跟大家說。",
+  kw:["聽說","傳言","一面之詞","判斷","爭議","兩邊","夾在中間","決策","八卦","小道消息","各說各話","評估","誰對"]},
+ {id:"jimo",title:"即墨大夫與阿大夫",src:"周紀・齊威王",cat:["功勞名聲"],
+  story:"齊威王派人實地查看：即墨大夫天天被說壞話，轄地卻田野開墾、百姓富足，是因他不肯巴結近臣；阿大夫天天被稱讚，轄地卻荒蕪，是靠重金收買左右。威王重賞前者、重懲後者，群臣從此不敢粉飾。",
+  quote:"是子不事吾左右以求助也。",
+  lesson:"名聲可以經營，實績才是根本。被中傷時，讓成果替你說話。",
+  actions:["定期用數據向主管回報進度，讓成果看得見","不逐一反駁流言，用可查證的紀錄回應","若你是主管，親自看現場和數字，不只聽風評"],
+  avoid:["花大量力氣在辦公室政治上反擊","以牙還牙，也去說對方壞話"],
+  script:"這是這一季的進度和數據，有任何疑問，我可以帶您看實際情況。",
+  kw:["背後","說壞話","中傷","流言","抹黑","拍馬屁","討好","關係","風評","不公平","考核","績效","打小報告","告狀","黑函","偏心","差別待遇","陷害","年終","獎金","考績","沒升","不公","誣賴","誣陷"]},
+ {id:"zhibo",title:"智伯之亡",src:"周紀・威烈王",cat:["同事協作"],
+  story:"智伯宴請韓康子、魏桓子，席間戲弄韓康子、羞辱其家臣段規。族人智國勸他：「不防備禍難，禍難一定會來。」智伯不聽，又強向韓、魏、趙索地。圍攻晉陽時，韓魏倒戈與趙聯手，智氏滅族。司馬光評：「才勝德謂之小人。」",
+  quote:"主不備難，難必至矣。",
+  lesson:"能力強卻輕慢同儕，終會被同儕聯手反撲。",
+  actions:["公開場合給同事留面子，玩笑不拿別人的短處開","向別人要資源時，同時說清楚對方能得到什麼","記得今天的配角，明天可能是關鍵盟友"],
+  avoid:["會議上當眾糾正或嘲諷","仗著績效向其他部門強索資源"],
+  script:"這部分多虧你們組先把資料整理好，我們才能這麼快完成。",
+  kw:["我很強","傲慢","驕傲","自大","我開玩笑","看不起他","業績好","能力強","恃才","得罪","樹敵","太直","嘴快"]},
+ {id:"xumu",title:"徙木立信",src:"周紀・秦孝公",cat:["帶領團隊","推動變革"],
+  story:"商鞅變法前，擔心百姓不信，在都城南門立一根三丈長的木頭，宣布能搬到北門者賞十金。眾人不信，加到五十金，終於有人搬了，商鞅當場兌現。新法隨後頒布。",
+  quote:"信者，人君之大寶也。",
+  lesson:"新官上任或推新制度，先用一件小事兌現承諾，建立信任。",
+  actions:["挑一件小而看得見的事，說到做到","承諾寫下來，按時回報進度","初期寧可少承諾、多兌現"],
+  avoid:["一上任就大幅改組","答應了卻拖延或打折扣"],
+  script:"我先處理大家反映最久的報銷流程，兩週內給結果。",
+  kw:["新主管","升遷","升官","升主管","上任","新團隊","信任","不服","威信","承諾","新制度","帶人","服眾"]},
+ {id:"jiangxiang",title:"將相和",src:"周紀・赧王",cat:["衝突化解"],
+  story:"藺相如因功拜上卿，位在老將廉頗之上。廉頗揚言要羞辱他，相如便處處迴避。門客以為恥，相如說：「強秦不敢攻趙，只因我們兩人都在。我這樣做，是先國家之急而後私仇。」廉頗聽聞，負荊登門謝罪，兩人成為刎頸之交。",
+  quote:"先國家之急而後私讎也。",
+  lesson:"以大局為先，暫時退讓不是軟弱；理虧時也要有認錯的勇氣。",
+  actions:["避免在公開場合正面衝突","讓可信的第三方了解你的考量","如果你是理虧的一方，直接、具體地道歉"],
+  avoid:["為了面子爭一時","冷戰到影響團隊目標"],
+  script:"我們看法不同沒關係，但這個專案需要你的經驗，找個時間對齊一下好嗎？",
+  kw:["不服","敵意","資深","老鳥","前輩","嫉妒","吃醋","衝突","吵架","道歉","和好","冷戰","槓上","處不來","看我不順眼","嘲笑","羞辱","當眾","酸我","挖苦","難相處","難搞","機車","個性差","脾氣差","合不來","討厭"]},
+ {id:"lusu",title:"魯肅宇下進言",src:"漢紀・獻帝建安十三年",cat:["向上管理"],
+  story:"曹操大軍南下，孫權群臣多主張投降。孫權起身更衣，魯肅追到屋簷下私下說：「我投降，曹操還會給我個官做；將軍投降，要去哪裡安身？」並建議召回周瑜。孫權歎道：「這是上天把你賜給我。」",
+  quote:"今肅可迎操耳，如將軍不可也。",
+  lesson:"重要意見挑對時機、私下說，並且站在對方的利益上說。",
+  actions:["會上不硬碰，會後找主管一對一","從主管的目標與風險出發，而不是你的立場","附上具體可行的下一步"],
+  avoid:["當眾和多數人辯論","只講「我覺得」，沒有對主管的影響分析"],
+  script:"剛才會上的方案，我想從您要向上交代的角度補充一個風險，大約五分鐘。",
+  kw:["說服","提案","意見不同","反對","建議","進言","被否決","不被採納","不聽","少數","溝通","想說服","開口","怎麼說","請假","不敢說","沒人聽"]},
+ {id:"majie",title:"揮淚斬馬謖",src:"魏紀・明帝太和二年",cat:["帶領團隊"],
+  story:"諸葛亮北伐，不顧眾議派馬謖督前鋒。馬謖違令捨水上山，被張郃大敗。諸葛亮依軍法斬馬謖，並上疏自貶三等：「臣明不知人。」又對眾人說：「今後凡有忠心的，請多指出我的缺失。」",
+  quote:"但勤攻吾之闕，則事可定。",
+  lesson:"用人失誤時，對事公正處理，也承擔主管自己的責任。",
+  actions:["依規則處理，對事不對人","公開承認自己在指派上的判斷失誤","邀請團隊指出盲點，把失敗轉成流程改進"],
+  avoid:["把錯全推給執行的人","因私交網開一面，造成不公"],
+  script:"這次是我指派時沒有評估好風險，主要責任在我。接下來我們這樣調整……",
+  kw:["出包","犯錯","失誤","失敗","部屬","下屬","責任","推卸","處罰","背鍋","指派","用人","搞砸","疏失","遲到","紀律","不守規定","規矩","早退"]},
+ {id:"xiaohe",title:"蕭何散財佐軍",src:"漢紀・高帝十一年",cat:["功勞名聲","向上管理"],
+  story:"蕭何留守關中，功勞第一，劉邦卻加派衛隊「保護」他。召平提醒：「禍從此開始了。主上在外征戰，你在內守城，加封派兵是在提防你。」建議他辭讓封賞、拿出家財資助軍隊。蕭何照做，劉邦大悅。",
+  quote:"願君讓封勿受，悉以家私財佐軍。",
+  lesson:"表現亮眼時，讓主管感受到你在幫他成功，而不是威脅他。",
+  actions:["把成果和主管、團隊的目標連在一起說","主動、透明地回報，不讓主管從別人口中聽到","重要場合把舞台留給主管"],
+  avoid:["越級邀功","讓個人聲望蓋過主管"],
+  script:"這次成果是照您定的方向做出來的，下一步想請您看看要不要擴大。",
+  kw:["功勞","表現太好","主管忌憚","提防","功高震主","光芒","越級","邀功","打壓","被防","不信任我","搶風頭"]},
+ {id:"caocan",title:"蕭規曹隨",src:"漢紀・惠帝",cat:["職涯成長","推動變革"],
+  story:"曹參接替蕭何為相國，一切遵照蕭何舊制。惠帝不解，曹參反問：「陛下比高帝如何？我比蕭何如何？」惠帝說都不如。曹參說：「既然法令已經清楚，我們守好職責、遵循不失，不也可以嗎？」",
+  quote:"遵而勿失，不亦可乎！",
+  lesson:"接手運作良好的工作，先守成再求變；改變要有理由，不是為了證明自己。",
+  actions:["前 90 天先弄懂既有流程為什麼這樣設計","保留有效的部分，並公開肯定前任","只改有數據證明的問題"],
+  avoid:["為了展現存在感全盤推翻","批評前任"],
+  script:"前任留下的流程很完整，我會先照著跑一季，再提出需要調整的地方。",
+  kw:["接手","前任","交接","調部門","轉調","新工作","新環境","改變","沿用","舊制度","剛來","被調","調職","單位","調動","換部門"]},
+ {id:"lumeng",title:"士別三日",src:"漢紀・獻帝建安十五年",cat:["職涯成長"],
+  story:"孫權勸呂蒙讀書，呂蒙推說軍務繁忙。孫權說：「不是要你當博士，只要多看看過去的事。」呂蒙於是向學。後來魯肅與他議事大吃一驚：「你已不是當年的吳下阿蒙！」呂蒙答：「士別三日，即更刮目相待。」",
+  quote:"士別三日，即更刮目相待。",
+  lesson:"職位上升就要主動補能力；也別用舊眼光看待同事。",
+  actions:["以工作需要為導向學習，每週固定時段","讓成長在具體的討論與成果中被看見","同事進步時，明確給予肯定"],
+  avoid:["以「太忙」為由停止學習","用過去的印象替人貼標籤"],
+  script:"上次那個問題我回去研究了一下，有個新做法想跟你討論。",
+  kw:["學習","成長","進修","瓶頸","停滯","轉職","能力不足","被看不起","刮目相看","資淺","不會","跟不上","想離職","換工作","我想走","迷惘","沒方向","前途"]},
+ {id:"loushide",title:"婁師德薦狄仁傑",src:"唐紀・武后",cat:["同事協作"],
+  story:"狄仁傑拜相後，屢次排擠婁師德。武則天問他：「婁師德能識人嗎？」狄仁傑說沒聽說過。武則天說：「我之所以重用你，正是婁師德推薦的。」狄仁傑大慚：「婁公盛德，我被他包容卻不知道。」",
+  quote:"婁公盛德，我為其所包容乃不知。",
+  lesson:"默默成就他人，信任終會被看見；也提醒自己別輕易看輕同事。",
+  actions:["持續做對的事，不讓對方的態度決定你的專業","推薦人選依能力，不依交情","對不友善的人，仍維持基本合作"],
+  avoid:["因為被排擠就扯對方後腿","四處宣揚自己幫過誰"],
+  script:"這件事你比較熟，我就照你的方式配合，有需要我補的地方再說。",
+  kw:["排擠","不領情","成見","被針對","幫忙","好心沒好報","包容","度量","推薦","小人","不友善","冷淡"]},
+ {id:"xiean",title:"謝安圍棋",src:"晉紀・孝武帝太元八年",cat:["危機壓力"],
+  story:"前秦苻堅百萬大軍南下，京師震恐。謝安神色如常，與謝玄下棋。淝水捷報送到，他看完放在一旁，繼續下棋。客人問起，只淡淡說：「小兒輩遂已破賊。」下完棋回內室，過門檻時才高興得折斷了木屐齒。",
+  quote:"小兒輩遂已破賊。",
+  lesson:"壓力越大，越要穩住情緒，信任你授權的人。",
+  actions:["先穩住自己，再對團隊發言","授權前線並給予信任，不微管理","私下釋放壓力，公開保持穩定"],
+  avoid:["在團隊面前慌亂、遷怒","危機時頻繁插手細節"],
+  script:"狀況我掌握了，你們照分工處理，每兩小時更新一次，有需要我出面隨時說。",
+  kw:["壓力","危機","緊急","焦慮","慌","截止","deadline","客訴","情緒","崩潰","微管理","授權","趕","爆炸","做不完","工作量","過勞","爆量","忙不過來","加班","好累","很累"]},
+ {id:"chaocuo",title:"晁錯削藩",src:"漢紀・景帝三年",cat:["推動變革","危機壓力"],
+  story:"晁錯力主削藩，諸侯怨聲四起。父親勸他：「削諸侯、疏骨肉，怨聲這麼多，何必呢？」晁錯說：「不這樣，天子不尊。」父親歎：「劉氏安了，晁氏卻危了。」不久七國以誅晁錯為名起兵，景帝為求息兵，將他斬於東市。",
+  quote:"劉氏安矣，而晁氏危矣。",
+  lesson:"對的事也要用對的方法。沒有盟友、沒有保護就衝在最前面，容易成為犧牲品。",
+  actions:["先盤點利害關係人，找到支持者","分階段推進，先拿下小勝","確認主管在壓力下會支持你，並留下書面授權"],
+  avoid:["一個人衝在最前面得罪所有人","以為「我是對的」就足夠"],
+  script:"這個改革方向我認同，但想先確認：若其他部門反彈，我們由誰出面說明？",
+  kw:["改革","得罪人","黑鍋","犧牲","當槍使","推動","阻力","反彈","孤立","衝太快","變革","專案","擋"]},
+ {id:"hongmen",title:"鴻門宴",src:"漢紀・高帝元年",cat:["危機壓力","衝突化解"],
+  story:"項羽要攻打劉邦，項伯連夜告知張良。劉邦透過項伯表達善意，隔天親赴鴻門謝罪：「是小人之言，讓將軍與我有了嫌隙。」宴中范增屢示意殺他、項莊舞劍，樊噲闖帳護主，劉邦藉如廁脫身。",
+  quote:"今者有小人之言，令將軍與臣有郤。",
+  lesson:"處於弱勢時，放低姿態、主動澄清，並借助雙方都信任的中間人化解危機。",
+  actions:["主動求見澄清，不等誤會發酵","先請雙方都信任的人傳達善意","在情緒高點時不硬拚，保留退路"],
+  avoid:["硬碰硬證明自己沒錯","把衝突擴大到更多人"],
+  script:"我聽說您對上次的事有些疑慮，想當面說明我的出發點，也聽聽您的看法。",
+  kw:["誤會","強勢","被誤解","澄清","化解","鬥爭","派系","站隊","得罪主管","高層","不高興","冤枉","誤解我","被誤會","背黑鍋","栽贓"]},
+ {id:"lisi",title:"諫逐客書",src:"秦紀・始皇帝十年",cat:["向上管理","職涯成長"],
+  story:"秦國宗室主張驅逐所有外國來的客卿，李斯也在名單中。他上書：「泰山不讓土壤，故能成其大；河海不擇細流，故能就其深。」說明驅逐人才只會資助敵國。秦王撤回逐客令，恢復李斯官職。",
+  quote:"泰山不讓土壤，故能成其大。",
+  lesson:"被排擠時不訴委屈，而用對方在乎的利益說明你的價值。",
+  actions:["用對方在乎的目標（業績、風險、競爭）說明你的價值","具體列出貢獻與數據","保持專業語氣，不抱怨"],
+  avoid:["情緒化地訴苦","攻擊排擠你的人"],
+  script:"我負責的這塊去年帶來的成果是……如果調整，建議先評估對交期的影響。",
+  kw:["空降","外來","被排擠","裁員","邊緣化","不被接納","跨部門","證明自己","被調走","資遣","外人"]},
+ {id:"fangdu",title:"房謀杜斷",src:"唐紀・太宗",cat:["同事協作"],
+  story:"唐太宗與房玄齡商議政事，常說「非杜如晦不能決」；杜如晦來了，最後多採用房玄齡的方案。房玄齡善於謀劃，杜如晦長於決斷，兩人同心輔政，史稱賢相。",
+  quote:"玄齡善謀，如晦能斷。",
+  lesson:"同事各有所長，把差異變成互補，比互相競爭更有力。",
+  actions:["明確分工：誰負責發想、誰負責拍板","公開肯定對方的強項","把風格差異當成彼此的檢查機制"],
+  avoid:["要求對方用你的方式做事","把搭檔當成競爭對手"],
+  script:"你比較擅長把方案收斂，我先列出幾個方向，最後由你幫忙定案好嗎？",
+  kw:["合作","搭檔","分工","風格不同","互補","個性不合","競爭","團隊合作","夥伴","協調","配合","不做事","丟給我","推給我","偷懶","搭便車","雷隊友","分配不均","都我在做"]},
+ {id:"zhangshizhi",title:"張釋之守法",src:"漢紀・文帝",cat:["向上管理","衝突化解"],
+  story:"漢文帝出行，有人從橋下跑出驚了御馬。廷尉張釋之依法判罰金，文帝大怒：「這人驚了我的馬，竟只罰錢！」張釋之說：「法律是天子與天下人共同遵守的。依法如此卻要加重，百姓就不再相信法律了。」文帝沉默良久，說：「廷尉判得對。」",
+  quote:"法者，天子所與天下公共也。",
+  lesson:"主管用情緒或罪惡感施壓時，把對話拉回規則與事實，溫和而堅定地守住界線。",
+  actions:["先承接情緒（「我理解您很急」），再回到規則、數據與流程","把拒絕說成「保護團隊與公司」，而不是個人不配合","重要要求事後用 Email 確認，留下書面紀錄"],
+  avoid:["被罪惡感推著答應不合理的要求","情緒對情緒，當場頂撞"],
+  script:"我理解您的壓力。照規定這樣做會有風險，我建議改用另一個方案，您看可以嗎？",
+  kw:["情緒勒索","勒索","施壓","罪惡感","愧疚","被逼","逼我","情緒化","發脾氣","罵人","不合理","拒絕","界線","不敢拒絕","說不出口","不知感恩","對不起公司","沒良心","硬要","強迫","不是我的工作","分外","職責外","額外","叫我做","硬塞"]},
+ {id:"hanxin",title:"韓信請立假王",src:"漢紀・高帝四年",cat:["帶領團隊","危機壓力"],
+  story:"劉邦被項羽圍困，韓信剛平定齊地，卻派人來要求封自己為「代理齊王」。劉邦大罵，張良、陳平暗中踩他的腳，附耳說：「現在情勢不利，擋得住他嗎？不如順勢立他，好好待他。」劉邦醒悟，改口說：「大丈夫平定諸侯，要當就當真王！」隨即派張良去封韓信。",
+  quote:"不如因而立之，善遇之，使自為守。",
+  lesson:"組員在關鍵時刻談條件或拿離職要脅時，先穩住，分清情緒與真正需求；不在當下撕破臉，事後補上制度。",
+  actions:["先暫停，不在怒氣中回覆","問清楚背後真正的需求：認可、薪資、職稱或工作量","能給的爽快給，不能給的說明原因與時程","事後建立備援與交接，降低對單一人的依賴"],
+  avoid:["當眾發火或情緒性拒絕","口頭答應卻不兌現，或一再讓步，讓要脅變成習慣"],
+  script:"我知道你很在意這件事。我們找時間把需求具體談清楚，我週五前給你明確答覆。",
+  kw:["組員","要脅","不幹了","談條件","加薪","職稱","擺爛","不配合","拿翹","只有他會","情緒勒索","勒索","威脅要走","撂話","攤牌","要離職","提離職","說要走"]},
+ {id:"tuichixin",title:"推赤心置人腹中",src:"漢紀・更始二年",cat:["帶領團隊"],
+  story:"劉秀收降銅馬軍，降將仍惶惶不安。劉秀明白他們的心思，下令各自回營帶兵，自己只帶輕騎巡視各營。降兵互相說：「蕭王把一片赤誠放進別人心裡，我們怎能不為他效死！」從此人心歸附。",
+  quote:"蕭王推赤心置人腹中，安得不投死乎！",
+  lesson:"組員不安、抱怨或鬧情緒時，用信任和行動安定人心，而不是用控制壓下去。",
+  actions:["一對一聽組員的擔心，不急著反駁","用具體行動表達信任：授權、讓他負責一塊","主管親自到現場，讓團隊看見你在"],
+  avoid:["用加強監控或威脅壓住情緒","在背後議論鬧情緒的組員"],
+  script:"最近大家壓力很大，我想先聽聽你最擔心的是什麼，我能幫上的一定處理。",
+  kw:["鬧情緒","抱怨","不安","士氣","負能量","不信任","人心","低落","消極","心情不好","合併","被併","新成員","不開心","哭"]},
+ {id:"tuomian",title:"唾面自乾",src:"唐紀・武后長壽二年",cat:["同事協作","職涯成長"],
+  story:"婁師德的弟弟出任代州刺史，臨行前婁師德問他：「我們兄弟都受重用，招人嫉妒，你打算怎麼自處？」弟弟說：「就算有人往我臉上吐口水，我擦掉就是。」婁師德說：「這正是我擔心的。別人吐你，是因為生氣；你當面擦掉，反而顯得不服，讓他更氣。口水不擦也會自己乾，笑著承受就好。」",
+  quote:"唾不拭自乾，當笑而受之。",
+  lesson:"別人的冷淡或不友善，先別急著對號入座或反擊；穩住自己的情緒，讓時間和表現慢慢化解。",
+  actions:["先別對號入座：大家安靜，可能只是話題不方便讓你聽","照顧自己的情緒，下班後找信任的人聊聊","用小互動慢慢拉近距離，例如分享點心、約一次午餐","專注把工作做好，讓相處建立在合作上"],
+  avoid:["當場追問「你們剛剛在說什麼」","把冷淡全歸咎於自己而自我否定"],
+  script:"我帶了點心，大家休息一下一起吃吧！",
+  kw:["不說話","冷落","小圈圈","融入","孤立","被孤立","心情","調適","不理我","安靜","不找我","不約我","被討厭","在意別人","玻璃心","聊天","排擠"]},
+ {id:"zisi",title:"子思薦苟變",src:"周紀・安王",cat:["帶領團隊"],
+  story:"子思向衛侯推薦苟變可以擔任大將。衛侯說：「他當小吏時曾向百姓多收了兩顆雞蛋，所以不用他。」子思說：「聖人用人就像木匠用木材，取它的長處、捨棄它的短處。現在只因為兩顆雞蛋就放棄一位守城良將，這話可別讓鄰國聽見。」",
+  quote:"聖人之官人，猶匠之用木也，取其所長，棄其所短。",
+  lesson:"用人要取其所長，不因小缺點否定一個人的價值。",
+  actions:["先列出部屬或同事最強的兩項能力，再安排工作","小缺點私下提醒，不貼標籤","區分「原則問題」和「小瑕疵」，分開處理"],
+  avoid:["因為一次小錯就全盤否定","只看缺點，不看貢獻"],
+  script:"這個案子很需要你的分析能力，細節的部分我請另一位同事一起幫忙確認。",
+  kw:["小錯","否定我","缺點","小毛病","不完美","挑剔","長處","短處","優點","一次錯","看人"]},
+ {id:"weiwenhou",title:"魏文侯守約",src:"周紀・威烈王",cat:["帶領團隊","職涯成長"],
+  story:"魏文侯和管理山林的小官約好去打獵。當天宴飲正開心，又下起雨，文侯卻準備出門。左右說：「今天喝得這麼開心，天又下雨，您要去哪裡？」文侯說：「我和虞人約好了打獵，再開心也不能失約。」於是親自前往，當面取消。",
+  quote:"吾與虞人期獵，雖樂，豈可無一會期哉！",
+  lesson:"再小的約定也要遵守；對基層守信，信譽才會累積。",
+  actions:["答應的時間和事項寫下來，準時做到","無法赴約時親自說明，不讓對方空等","對職位比你低的人，一樣守信"],
+  avoid:["臨時爽約又不通知","只對主管守信，對基層隨便"],
+  script:"不好意思，原本約好的會議我得改期，先跟你說明原因，改到週四上午可以嗎？",
+  kw:["守信","失約","爽約","改期","遲交","答應了","約好","放鴿子","信用","準時"]},
+ {id:"zhaihuang",title:"翟璜圓場",src:"周紀・威烈王",cat:["衝突化解","向上管理"],
+  story:"魏文侯問群臣：「我是什麼樣的君主？」任座直說：「您攻下中山，卻封給兒子而不封給弟弟，算不上仁君。」文侯大怒，任座快步退出。輪到翟璜，他說：「您是仁君。我聽說君主仁厚，臣子才敢直言。剛才任座說話這麼直，所以我知道您是仁君。」文侯轉怒為喜，派翟璜召回任座。",
+  quote:"君仁則臣直。",
+  lesson:"同事頂撞主管、場面僵住時，用給雙方台階的方式化解，而不是選邊站。",
+  actions:["先降溫，不在火頭上評論誰對誰錯","找出雙方都能接受的說法：肯定主管的雅量，也肯定同事的用心","事後私下提醒同事表達的方式"],
+  avoid:["落井下石附和主管","當場幫同事頂回去，把衝突擴大"],
+  script:"他剛剛說得比較直，也是因為相信您願意聽真話。我們把重點整理一下再討論。",
+  kw:["頂撞","圓場","打圓場","場面僵","尷尬","當場吵","台階","會議上吵","頂嘴"]},
+ {id:"wuqi",title:"吳起與士卒同甘苦",src:"周紀・安王",cat:["帶領團隊"],
+  story:"吳起帶兵時，和最低階的士兵穿一樣的衣服、吃一樣的飯，睡覺不鋪席子，行軍不騎馬，親自背糧食，和士兵分擔勞苦。有士兵長了毒瘡，吳起親自為他吸出膿液。士兵們因此願意為他拚命作戰。",
+  quote:"與士卒最下者同衣食，臥不設席，行不騎乘。",
+  lesson:"帶人要先和團隊站在一起；主管願意分擔辛苦，團隊才會全力以赴。",
+  actions:["團隊加班趕工時，主管也在場一起處理","關心組員的身體和家庭狀況","資源先給前線，不搞特權"],
+  avoid:["只出一張嘴，自己準時下班","享受特權，卻要求團隊犧牲"],
+  script:"這週大家辛苦了，晚上我留下來一起把資料對完，宵夜我請。",
+  kw:["以身作則","特權","同甘共苦","帶頭","只出一張嘴","關心組員","身先士卒","主管都不做"]},
+ {id:"sunbin",title:"孫臏與龐涓",src:"周紀・顯王",cat:["同事協作","危機壓力"],
+  story:"龐涓和孫臏曾一起學兵法。龐涓在魏國當將軍，自知能力不如孫臏，便把他騙到魏國，羅織罪名砍斷他的雙腳、在臉上刺字。孫臏暗中逃到齊國，後來在馬陵設下埋伏，龐涓兵敗，自刎前說：「竟讓這小子成名了！」",
+  quote:"自以為能不及孫臏，召之；至，則以法斷其兩足而黥之。",
+  lesson:"被能力相近的同事嫉妒時，要懂得自保；而嫉妒、打壓人才的人，最後往往害到自己。",
+  actions:["重要的分工和成果留下書面紀錄","未定案的想法，不毫無保留地交給有競爭關係的人","被打壓時先保存實力，再找機會換舞台"],
+  avoid:["對嫉妒你的人毫無防備","用打壓別人來證明自己"],
+  script:"這份企劃我會同時寄給主管和你，我們分工的部分也一起列清楚。",
+  kw:["嫉妒我","眼紅","同期","打壓","暗算","陷害","被陷害","競爭對手","怕我超越","扯後腿"]},
+ {id:"guowei",title:"千金市骨",src:"周紀・赧王",cat:["帶領團隊"],
+  story:"燕昭王想招攬賢才，請教郭隗。郭隗說：「古代有位君主用千金求千里馬，使者卻花五百金買回一副死馬的骨頭。君主大怒，使者說：『死馬都肯花五百金，何況活馬？』不到一年，就有三匹千里馬送上門。大王想招賢，就從我郭隗開始吧。」昭王為郭隗築宮、拜他為師，樂毅等賢才紛紛前來。",
+  quote:"今王必欲致士，先從隗始。",
+  lesson:"想吸引人才，先從善待身邊現有的人開始，讓外界看見你的誠意。",
+  actions:["先肯定、提拔團隊中現有的好人才","兌現對現有成員的承諾，好口碑自然傳開","招募時說清楚發展機會和舞台"],
+  avoid:["只給新人好條件，冷落老員工","承諾很多卻不兌現"],
+  script:"這次的升遷名額，我先從團隊內部表現最好的人推薦起。",
+  kw:["招募","招人","找不到人","留不住人","人才","徵才","缺人","人手不足","面試"]},
+ {id:"maosui",title:"毛遂自薦",src:"周紀・赧王",cat:["職涯成長"],
+  story:"秦軍圍攻邯鄲，平原君要挑二十位門客同去楚國求救，只湊到十九人。毛遂自我推薦。平原君說：「賢士就像放在袋子裡的錐子，尖端馬上會露出來。你在我門下三年，我沒聽說過你。」毛遂說：「我今天才請求放進袋子裡；如果早放進去，整個錐身都會露出來。」到了楚國，毛遂按劍上前，說服楚王出兵。",
+  quote:"使遂蚤得處囊中，乃穎脫而出，非特其末見而已。",
+  lesson:"機會不會自己找上門；準備好了，就要主動爭取舞台。",
+  actions:["對想做的專案，主動向主管表達意願和你能貢獻什麼","準備好具體的計畫或成果再開口","爭取到機會就全力交出成績"],
+  avoid:["默默等待被發現","爭取了卻準備不足"],
+  script:"這個新專案我很有興趣，我整理了一份初步規劃，想爭取參與的機會。",
+  kw:["主動爭取","自薦","機會","不被看見","沒被注意","爭取","表現機會","默默做事","埋沒","不受重用"]},
+ {id:"zhaokuo",title:"紙上談兵",src:"周紀・赧王",cat:["帶領團隊","職涯成長"],
+  story:"趙括從小熟讀兵法，談論起來連父親趙奢都難不倒他。但趙奢說：「打仗是生死大事，他卻說得這麼輕鬆。趙國如果用他當將軍，一定會失敗。」長平之戰時，趙王以趙括取代廉頗。趙括全面更改軍令、撤換軍官，結果被秦將白起包圍，四十多萬趙軍覆沒。",
+  quote:"兵，死地也，而括易言之。",
+  lesson:"說得頭頭是道不等於做得到；用人要看實戰，自己也要把知識落實到現場。",
+  actions:["用小專案先測試新人的實作能力","學到新方法，先在小範圍試行","接手時先了解現場，不急著全面更改"],
+  avoid:["只憑簡報和學歷用人","剛上任就推翻所有既有做法"],
+  script:"這個方法聽起來不錯，我們先在一個小組試行兩週，看實際成效再推廣。",
+  kw:["紙上談兵","只會說","光說不練","嘴砲","簡報很強","不切實際","理論派","沒經驗","學歷高"]},
+ {id:"zhilu",title:"指鹿為馬",src:"秦紀・二世三年",cat:["向上管理","危機壓力"],
+  story:"趙高想要專權，怕群臣不服，先做了一個試驗：牽一頭鹿獻給秦二世，說是馬。二世笑說：「丞相弄錯了吧，這是鹿。」問左右大臣，有人沉默，有人說是馬來附和趙高，也有人說是鹿。趙高事後暗中陷害說是鹿的人，從此群臣都畏懼他。",
+  quote:"持鹿獻於二世曰：「馬也。」",
+  lesson:"有權力的人要大家附和明顯錯誤的事時，要看清這是忠誠測試；守住底線，也要用聰明的方式保護自己。",
+  actions:["涉及違法或重大錯誤時，用書面、就事論事地表達疑慮","透過可信任的上級或制度管道（稽核、人資）反映","不在公開場合單獨硬碰，先保存證據"],
+  avoid:["為了自保跟著說謊、背書","情緒化地公開對抗，讓自己成為目標"],
+  script:"這個數據和原始資料不一致，我先用 Email 列出差異，請您確認後再對外使用。",
+  kw:["指鹿為馬","顛倒是非","睜眼說瞎話","附和","造假","作假","竄改","逼我說謊","表態","違背良心"]},
+ {id:"zhuixin",title:"蕭何月下追韓信",src:"漢紀・高帝元年",cat:["帶領團隊"],
+  story:"韓信在劉邦軍中不受重用，趁夜逃走。蕭何聽說後，來不及報告就親自去追。劉邦以為蕭何也跑了，又氣又急。蕭何回來後說：「將領容易找，像韓信這樣的人才天下無雙。大王如果想爭天下，非用韓信不可。」劉邦於是拜韓信為大將。",
+  quote:"諸將易得耳；至如信者，國士無雙。",
+  lesson:"發現人才要離開時，主管要立刻行動挽留，並為他爭取合適的舞台。",
+  actions:["察覺優秀組員有離職跡象，主動約談了解原因","為他向上爭取更適合的職務或資源","用具體的發展藍圖留人，不只靠加薪"],
+  avoid:["等對方遞辭呈才處理","讓人才長期做不適合的工作"],
+  script:"我很重視你在團隊的角色，想聽聽你對下一步發展的想法，我會幫你向上爭取。",
+  kw:["留才","留人","挽留","人才流失","遞辭呈","被挖角","慰留","組員想走","部屬想離職"]},
+ {id:"weiwuzhi",title:"魏無知薦陳平",src:"漢紀・高帝二年",cat:["帶領團隊","功勞名聲"],
+  story:"有人向劉邦告狀，說陳平在家和嫂子私通，又收受將領的財物。劉邦責問推薦人魏無知。魏無知說：「我推薦的是他的才能，您問的是他的品行。如今楚漢相爭，您需要的是能出奇計的人。」劉邦再問陳平，陳平坦然說明收錢是為了辦事，並表示願意交還財物辭職。劉邦向他道歉，重賞並提拔他。",
+  quote:"臣所言者，能也；陛下所問者，行也。",
+  lesson:"面對流言，先釐清事實，回到「這個人能不能把事做好」；自己被質疑時，坦然說明比辯解更有力。",
+  actions:["聽到對同事的負面傳言，先當面查證","評估人時，把私生活傳聞和工作表現分開","自己被質疑時，主動、坦白地說明來龍去脈"],
+  avoid:["憑傳言就撤換人","被質疑時情緒化辯解或隱瞞"],
+  script:"關於大家提到的狀況，我把經過和相關紀錄整理好了，想當面跟您說明。",
+  kw:["不檢點","被告狀","私生活","品行","被質疑","傳言說我","黑歷史","過去的事","被調查"]},
+ {id:"sanjie",title:"劉邦論三傑",src:"漢紀・高帝五年",cat:["帶領團隊"],
+  story:"劉邦稱帝後，問群臣自己為什麼能得天下。他說：「運籌帷幄、決勝千里，我不如張良；安撫百姓、供應糧餉，我不如蕭何；統率百萬大軍、戰必勝攻必取，我不如韓信。這三位都是人傑，我能任用他們，所以得到天下。項羽只有一個范增卻不能用，所以被我打敗。」",
+  quote:"此三者，皆人傑也，吾能用之，此吾所以取天下也。",
+  lesson:"主管不必樣樣比部屬強；看見每個人的強項並放手讓他發揮，才是領導力。",
+  actions:["坦然承認部屬在某些領域比你強","把關鍵任務交給最擅長的人，並給足授權","成功時公開把功勞歸給團隊"],
+  avoid:["怕部屬比你強而不敢用","什麼都要自己做、自己決定"],
+  script:"這部分你比我專業，就由你主導，需要資源或我出面的地方隨時告訴我。",
+  kw:["部屬比我強","下屬很強","能力比我好","不如部屬","怕被取代","什麼都自己做","不放手","主管能力"]},
+ {id:"yongchi",title:"雍齒封侯",src:"漢紀・高帝六年",cat:["帶領團隊","衝突化解"],
+  story:"劉邦封了二十多位大功臣後，其他人日夜爭功，議論紛紛，甚至聚在一起密謀。張良建議：「找一位您平時最痛恨、而且群臣都知道的人，先封他。」劉邦於是封曾經背叛他的雍齒為侯。群臣都很高興：「連雍齒都能封侯，我們不用擔心了。」",
+  quote:"雍齒尚為侯，我屬無患矣。",
+  lesson:"團隊人心浮動時，用公平、看得見的行動安定大家，先處理最讓人擔心的情況。",
+  actions:["獎懲標準公開透明，讓大家知道依規則而不是依好惡","和你有過節但有貢獻的人，照樣給予肯定","人心不安時盡快說明，不讓猜測發酵"],
+  avoid:["只獎勵和自己親近的人","用沉默面對團隊的不安"],
+  script:"這次考核完全依照我們年初定的指標，每個人的結果我都會一對一說明。",
+  kw:["考核公平","獎金分配","論功行賞","人心浮動","大家不安","私心","有過節","分配不公"]},
+ {id:"xiliu",title:"細柳營",src:"漢紀・文帝後六年",cat:["職涯成長","向上管理"],
+  story:"漢文帝親自到各軍營慰勞。在霸上、棘門，車駕都直接駛入。到了周亞夫的細柳營，守門軍官擋住說：「軍中只聽將軍的命令，不聽天子的詔書。」文帝派使者持節通知，周亞夫才開門，並請文帝的車駕緩行，自己以軍禮相見。文帝讚嘆：「這才是真正的將軍！」",
+  quote:"軍中聞將軍令，不聞天子之詔。",
+  lesson:"堅守專業規範、按流程做事，即使面對高層也一樣，反而最能贏得尊重。",
+  actions:["安全、品質、資安等規範，對任何人都一致執行","面對高層時，禮貌但堅定地說明規定","提供合規的替代方式，讓對方方便配合"],
+  avoid:["因為對方位階高就破例","執行規定時態度傲慢"],
+  script:"依規定訪客都要先登記，我馬上幫您辦好，大約一分鐘。",
+  kw:["破例","高層要求","特殊待遇","照規矩","走後門","通融","按流程","標準作業"]},
+ {id:"jixin",title:"汲黯積薪",src:"漢紀・武帝",cat:["職涯成長","功勞名聲"],
+  story:"汲黯資歷很深，當年公孫弘、張湯都還是小官。後來兩人的地位都超過了汲黯。汲黯對漢武帝說：「陛下用群臣就像堆柴火，後來的反而堆在上面。」武帝沉默不語。汲黯性格剛直、說話不留情面，雖然受人敬重，卻始終難以升遷。",
+  quote:"陛下用群臣如積薪耳，後來者居上。",
+  lesson:"被後進超越時，抱怨很難改變結果；檢視自己的溝通方式，並讓自己的價值與時俱進。",
+  actions:["冷靜檢視後進升遷的原因，找出可以學習的地方","和主管談自己的發展期待，以及需要補強的地方","把資深經驗轉化成新價值，例如帶人、建立制度"],
+  avoid:["公開抱怨「後來者居上」","倚老賣老、拒絕學新東西"],
+  script:"我想了解下一階段需要具備哪些能力，請您給我一些具體的建議。",
+  kw:["學弟","學妹","不甘心","後來者居上","被超越","後輩升遷","學弟妹升官","資深卻沒升","年資","晚進來的","比我資淺","沒升到"]},
+ {id:"bingji",title:"丙吉問牛",src:"漢紀・宣帝",cat:["帶領團隊"],
+  story:"丞相丙吉出行，路上遇到群眾鬥毆、有人死傷，他沒有過問；看到有人趕牛，牛喘氣吐舌，他卻停車詢問。屬下不解。丙吉說：「鬥毆是長安令、京兆尹該管的事。現在是春天，天氣不熱，牛卻在喘，恐怕是節氣失調，這關係到全國農事，才是丞相該操心的。」",
+  quote:"宰相不親小事，非所當於道路問也。",
+  lesson:"主管要分層負責、抓大放小，專注在只有你能處理的關鍵問題。",
+  actions:["列出只有你能處理的事，其他交給負責的人","部屬職責內的事，讓他們處理、事後回報","留意小徵兆背後的系統性風險"],
+  avoid:["每件小事都親自插手","越過部屬直接指揮基層"],
+  script:"這件事由組長全權處理，你們有結果再跟我報告就好。",
+  kw:["抓大放小","事必躬親","管太細","越級指揮","分層負責","瑣事","優先順序","忙不完的雜事"]},
+ {id:"zhaochongguo",title:"百聞不如一見",src:"漢紀・宣帝神爵元年",cat:["向上管理","推動變革"],
+  story:"羌人反叛，七十多歲的趙充國主動請命出征。漢宣帝問他需要多少兵力，他說：「百聞不如一見。軍事很難在遠方估算，我願意先到金城實地察看，再擬定方略。」到了前線，他堅持屯田、分化羌人，不急著決戰，多次上書據理說明，最後平定羌亂。",
+  quote:"百聞不如一見，兵難遙度。",
+  lesson:"提方案前先到現場了解實況；向上報告時用實地資料說服，而不是憑想像。",
+  actions:["接到任務先實地了解，再提出方案","用現場觀察和數據撰寫建議","方案不被接受時，補充資料再說明一次理由"],
+  avoid:["坐在辦公室憑想像下決定","為了迎合上意，給出不切實際的承諾"],
+  script:"我想先到現場看兩天，週五前給您一份有數據根據的方案。",
+  kw:["現場","實地","第一線","提方案","不了解狀況","憑想像","預估","寫企劃","做規劃"]},
+ {id:"mayuan",title:"馬援誡兄子",src:"漢紀・光武帝建武",cat:["同事協作"],
+  story:"馬援在前線時，聽說姪子馬嚴、馬敦喜歡議論別人、結交輕浮的人，特地寫信告誡：「我希望你們聽到別人的過失，就像聽到父母的名字一樣：耳朵可以聽，嘴巴不可以說。喜歡議論別人的長短、隨便批評時政，是我最厭惡的事。」",
+  quote:"聞人過失，如聞父母之名，耳可得聞，口不可得言也。",
+  lesson:"不在背後議論同事的是非；聽到八卦，不傳、不評。",
+  actions:["同事聊八卦時不加入評論，可以轉換話題","對某人有意見，直接和本人溝通","群組裡不轉傳未經證實的消息"],
+  avoid:["把聽到的八卦轉告別人","在背後批評主管或同事"],
+  script:"這個我不太清楚，我們還是先討論下午會議的事吧。",
+  kw:["議論","說人是非","講別人壞話","聊同事","茶水間","背後批評","傳話","嘴碎","是非","愛講八卦"]},
+ {id:"yangzhen",title:"楊震四知",src:"漢紀・安帝永初四年",cat:["職涯成長"],
+  story:"楊震赴任東萊太守，途經昌邑。他曾經推薦過的縣令王密，夜裡帶著十斤黃金來送禮，說：「夜深了，沒有人會知道。」楊震說：「天知道、神知道、我知道、你知道，怎麼說沒有人知道？」王密慚愧地離開。",
+  quote:"天知，神知，我知，子知，何謂無知者！",
+  lesson:"職場誠信不打折；面對不當餽贈或利益交換，堅定而有禮地拒絕。",
+  actions:["依公司規定婉拒廠商或部屬的禮物、紅包","無法當場退回的，登記後交給公司處理","拒絕時給對方台階，維持合作關係"],
+  avoid:["心想「沒人知道」就收下","拒絕時當眾讓對方難堪"],
+  script:"謝謝您的心意，公司規定不能收，我們把案子做好就是最好的合作。",
+  kw:["送禮","紅包","回扣","收禮","廠商請客","賄賂","利益交換","誠信","好處"]},
+ {id:"dashu",title:"大樹將軍",src:"漢紀・更始二年",cat:["功勞名聲"],
+  story:"馮異跟隨劉秀征戰，為人謙退，從不誇耀自己。每次軍隊停下休息，將領們坐在一起爭論功勞，馮異總是獨自坐在大樹下，軍中因此稱他「大樹將軍」。後來重新分配部隊時，士兵們都說願意跟隨大樹將軍。",
+  quote:"諸將並坐論功，異常獨屏樹下，軍中號曰「大樹將軍」。",
+  lesson:"不爭功、不搶鋒頭、踏實做事的人，最後會被大家看見和信任。",
+  actions:["成果用紀錄說話，不必在會議上爭功","團隊成功時，先感謝夥伴的貢獻","在關鍵時刻穩定交付，累積信任"],
+  avoid:["和同事爭論誰的功勞大","把團隊的成果說成自己一個人的"],
+  script:"這次能順利完成，是大家分工合作的結果，我負責的是整合進度。",
+  kw:["爭功","搶功","功勞","被搶功","論功","低調","謙虛","不想爭","功勞被拿走"]},
+ {id:"caocao",title:"曹操焚書",src:"漢紀・獻帝建安五年",cat:["帶領團隊","衝突化解"],
+  story:"官渡之戰後，曹操在袁紹的文書中，搜出許多許都官員和自己部下暗中寫給袁紹的信。有人建議逐一追查。曹操下令全部燒掉，說：「當時袁紹那麼強大，連我都難以自保，何況其他人呢？」",
+  quote:"當紹之強，孤猶不能自保，況眾人乎！",
+  lesson:"危機過後不翻舊帳，給大家重新開始的機會，團隊才能真正安定。",
+  actions:["專案或組織動盪後，明確宣布「往前看」","依今後的表現評價人，不追究當時的觀望","私下和曾經有疑慮的人建立新的信任"],
+  avoid:["秋後算帳，清算當時「不站在你這邊」的人","把過去的事一直掛在嘴上"],
+  script:"過去那段時間大家都不好過，從今天起我們只看接下來怎麼做。",
+  kw:["翻舊帳","秋後算帳","背叛","牆頭草","觀望","不支持我","舊帳","既往不咎","原諒"]},
+ {id:"liubei",title:"勿以惡小而為之",src:"魏紀・文帝黃初四年",cat:["職涯成長"],
+  story:"劉備臨終前留下遺詔告誡兒子劉禪：「不要因為壞事小就去做，不要因為善事小就不做。只有賢能和德行，才能讓人信服。」",
+  quote:"勿以惡小而為之，勿以善小而不為。",
+  lesson:"職場信譽由小事累積；小便宜不占，小善不輕忽。",
+  actions:["公司的資源和時間不挪作私用，再小也一樣","隨手幫同事一點小忙，主動補位","每天把小承諾確實做到"],
+  avoid:["覺得「大家都這樣」就跟著占小便宜","認為小事不重要而敷衍"],
+  script:"這個我順手幫你處理好了，你先忙你的。",
+  kw:["小便宜","細節","公器私用","摸魚","大家都這樣","品格","好習慣","小地方"]},
+ {id:"luxun",title:"陸遜忍辱負重",src:"魏紀・文帝黃初三年",cat:["帶領團隊","危機壓力"],
+  story:"劉備率大軍伐吳，孫權任命年輕的陸遜為大都督。帳下將領多是孫策時代的老將或宗室貴族，各自不服。陸遜按劍說：「主上看重我，是因為我能忍辱負重。各位要各守其職！」他堅守不戰七、八個月，等蜀軍疲憊，再以火攻大破劉備，諸將從此敬服。",
+  quote:"國家所以屈諸君使相承望者，以僕有尺寸可稱，能忍辱負重故也。",
+  lesson:"年輕主管帶資深部屬，不必急著證明自己；沉住氣、守住策略，用成果讓人信服。",
+  actions:["對資深部屬保持尊重，但重大決策堅持原則","清楚說明策略和時程，不因質疑而動搖","用階段性成果建立威信"],
+  avoid:["為了立威而急躁行事","被老鳥一激就改變判斷"],
+  script:"我理解大家有不同看法，這個策略我們先執行到月底，屆時用數據檢討。",
+  kw:["老鳥","年輕主管","資歷淺","帶資深","老鳥不服","部屬年紀比我大","不服管","被看輕","太年輕","忍辱負重"]},
+ {id:"jinguo",title:"司馬懿受巾幗",src:"魏紀・明帝青龍二年",cat:["危機壓力","衝突化解"],
+  story:"諸葛亮出兵五丈原，多次挑戰，司馬懿都堅守不出。諸葛亮派人送去女人的頭巾和衣服羞辱他。司馬懿大怒，上表請求出戰。魏明帝派辛毗持節到軍中阻止，司馬懿便順勢繼續堅守。不久諸葛亮病逝軍中，蜀軍退兵。",
+  quote:"亮數挑戰，懿不出；亮乃遺懿巾幗婦人之服。",
+  lesson:"被人刻意激怒時，不要掉進對方設計的戰場；給自己找個台階，守住真正的目標。",
+  actions:["被挑釁時先暫停，不立即回覆訊息或郵件","想清楚自己真正的目標，再決定要不要回應","必要時讓主管或制度出面，替自己保留轉圜空間"],
+  avoid:["一被激就衝動回擊","為了面子做出不利長期的決定"],
+  script:"你的意見我收到了，我整理一下再回覆你。",
+  kw:["激將","挑釁","被激怒","嗆我","故意刺激","酸言酸語","嘲諷","忍不住","想回嗆","被惹毛"]},
+ {id:"zuti",title:"聞雞起舞",src:"晉紀・愍帝建興元年",cat:["職涯成長"],
+  story:"祖逖年輕時和好友劉琨同任司州主簿，兩人同床而睡。半夜聽到雞叫，祖逖把劉琨踢醒說：「這不是壞聲音！」兩人便起床舞劍練武。後來祖逖率部北伐，渡江時在船中擊槳立誓收復中原。",
+  quote:"中夜聞雞鳴，蹴琨覺曰：「此非惡聲也！」因起舞。",
+  lesson:"和志同道合的夥伴互相砥礪、持續精進，機會來時才接得住。",
+  actions:["找一位同事或朋友互相督促學習","每天固定一小段時間投資自己","把目標說出來，請夥伴幫你檢核進度"],
+  avoid:["等「有空」才學習","只和愛抱怨的人在一起"],
+  script:"我們要不要每週一起讀一本工作相關的書，互相分享心得？",
+  kw:["自我提升","進步","學新東西","讀書會","考證照","證照","自律","拖延","沒動力"]},
+ {id:"qiandu",title:"孝文帝遷都",src:"齊紀・武帝永明十一年",cat:["推動變革"],
+  story:"北魏孝文帝想把國都從平城遷到洛陽，怕群臣反對，便宣稱要大舉南伐。大軍到洛陽時連日大雨，群臣跪求停止南征。孝文帝說：「興師動眾不能無功而返。如果不南伐，就把國都遷到這裡。」群臣寧可遷都也不願南征，於是順利定都洛陽。",
+  quote:"今者興發不小，動而無成，何以示後！",
+  lesson:"推動大變革時，設計好對方能接受的選項和時機，讓改變成為大家主動選擇的結果。",
+  actions:["事先了解反對者最在意什麼","提出兩個方案讓大家選，而不是只給一個","選在大家最有動機改變的時機推動"],
+  avoid:["硬推單一方案、不留選擇","在大家疲憊或不滿時倉促宣布"],
+  script:"我們有兩個方向：A 是維持現狀但要多投入人力，B 是改用新系統，大家比較傾向哪一個？",
+  kw:["說服大家","大家反對","推不動","換系統","新政策","搬遷","方案選擇","沒人想改","改革阻力"]},
+ {id:"zhangsun",title:"長孫皇后賀魏徵",src:"唐紀・太宗貞觀六年",cat:["向上管理","衝突化解"],
+  story:"唐太宗退朝後怒氣沖沖地說：「總有一天要殺了這個鄉巴佬！」長孫皇后問是誰，太宗說：「魏徵常在朝堂上讓我難堪。」皇后退下，換上朝服站在庭中。太宗驚問原因，皇后說：「我聽說君主英明，臣子才會正直。魏徵正直，正是因為陛下英明，我怎能不道賀？」太宗轉怒為喜。",
+  quote:"妾聞主明臣直；今魏徵直，由陛下之明故也。",
+  lesson:"主管情緒爆發時不要火上加油；等情緒過去，用給台階、肯定對方的方式，把話題帶回正軌。",
+  actions:["主管在氣頭上時，先聽、不辯解","等對方冷靜後，再找合適時機說明","換個角度肯定主管的出發點，讓他有台階下"],
+  avoid:["在主管氣頭上爭論對錯","背後抱怨或火上加油"],
+  script:"您會這麼在意，是因為您對品質要求很高。我把問題整理好，等一下再跟您報告。",
+  kw:["主管生氣","老闆發飆","暴怒","抓狂","氣頭上","被罵","臉色很難看","情緒失控","消氣"]},
+ {id:"zongqiu",title:"太宗縱囚",src:"唐紀・太宗貞觀六年",cat:["帶領團隊"],
+  story:"唐太宗親自審查死囚，心生憐憫，放三百九十名死囚回家，約定第二年秋天回來受刑。到了期限，所有人在沒有人監督的情況下如期返回，沒有一人逃亡。太宗於是全部赦免。",
+  quote:"縱死囚三百九十人歸家，期以明年秋來就死。",
+  lesson:"給人信任，往往能喚起對方的責任感；用信任代替監控，團隊會更自律。",
+  actions:["給組員明確的目標和期限，過程讓他自主安排","以結果驗收，不時時盯人","對守信的人公開肯定，形成團隊文化"],
+  avoid:["什麼都要回報、處處設防","給了信任又隨時收回"],
+  script:"這個案子交給你，週五前完成就好，中間怎麼安排由你決定。",
+  kw:["遠距","在家工作","盯人","監控","打卡","不信任組員","自主","彈性","信任部屬"]},
+ {id:"direnjie",title:"狄仁傑不問譖者",src:"唐紀・武后",cat:["功勞名聲","同事協作"],
+  story:"武則天對狄仁傑說：「你在汝南的政績很好，但有人在我面前說你壞話，你想知道是誰嗎？」狄仁傑說：「陛下如果認為我有錯，我願意改正；如果知道我沒有錯，那是我的幸運。我不想知道是誰說的。」武則天深深讚賞他。",
+  quote:"臣不願知譖者。",
+  lesson:"知道有人在背後說你壞話時，專注改進自己，不追究是誰，反而更顯氣度。",
+  actions:["把批評當成檢視自己的機會，有則改之","不刻意打聽是誰說的，避免陷入猜忌","繼續和所有同事正常合作"],
+  avoid:["到處追查是誰在背後說話","因為懷疑而對某些同事冷淡"],
+  script:"謝謝您告訴我，如果有我需要改進的地方，請直接跟我說。",
+  kw:["誰說的","打聽","被批評","想知道是誰","猜忌","懷疑同事","抓內鬼","誰在說我"]},
+ {id:"huihe",title:"郭子儀單騎見回紇",src:"唐紀・代宗永泰元年",cat:["衝突化解","危機壓力"],
+  story:"吐蕃、回紇聯軍數十萬進逼，唐軍兵少。郭子儀說：「硬拚必敗。回紇本來和我交好，我親自去說服他們。」他脫下盔甲、放下長槍，只帶幾名騎兵前往回紇營中。回紇首領認出他，紛紛下馬跪拜，重新和唐朝結盟，聯手擊退吐蕃。",
+  quote:"今眾寡不敵，難以力勝……不如挺身往說之。",
+  lesson:"衝突僵持時，放下防備、親自真誠溝通，往往比對抗更能化解危機。",
+  actions:["和對立的部門或同事約一對一面談，不帶人馬壯聲勢","先提雙方過去合作的好經驗，再談共同利益","找出能讓雙方都受益的合作方式"],
+  avoid:["只透過 Email 或群組隔空交火","拉更多人站隊施壓"],
+  script:"我們兩個部門其實目標一樣，我想當面跟你聊聊，看怎麼一起把這件事做好。",
+  kw:["部門衝突","對立","敵對","僵持","談判","兩個部門","和解","化敵為友","搶資源","部門之間"]},
+ {id:"koumi",title:"口蜜腹劍",src:"唐紀・玄宗天寶元年",cat:["同事協作","危機壓力"],
+  story:"李林甫擔任宰相，妒忌才能、聲望比他高的人，用盡手段排擠。他對人表面友善，說話甜美動聽，暗中卻設計陷害。當時的人說李林甫「口有蜜，腹有劍」。",
+  quote:"世謂李林甫「口有蜜，腹有劍」。",
+  lesson:"遇到表面熱情、背後扯後腿的人，保持禮貌但留心防範，重要事情留下紀錄。",
+  actions:["重要的約定和交辦事項，用 Email 或訊息確認","不在對方面前透露未定案的想法，或對他人的評論","用實際表現和透明溝通建立自己的信譽"],
+  avoid:["被甜言蜜語打動而毫無防備","用同樣的手段報復"],
+  script:"我們剛剛討論的分工，我整理成 Email 寄給大家確認一下。",
+  kw:["口蜜腹劍","兩面人","雙面人","笑裡藏刀","表面對我好","當面一套","背後一套","假好心","心機","虛偽"]}
+];
+
+const CAT_HINTS = {
+  "向上管理":["主管","老闆","上司","經理","長官","高層"],
+  "同事協作":["同事","同儕","夥伴","別組","其他部門"],
+  "衝突化解":["衝突","吵","不合","誤會","敵意"],
+  "帶領團隊":["部屬","下屬","團隊","組員","帶人","管理"],
+  "推動變革":["改革","新制度","推動","流程","改變"],
+  "功勞名聲":["功勞","搶功","績效","考核","名聲"],
+  "危機壓力":["壓力","危機","緊急","焦慮"],
+  "職涯成長":["學習","成長","轉職","升遷","瓶頸"]
+};
+
+const SENSITIVE = ["pua","造假","回扣","賄賂","精神暴力","人身攻擊","霸凌","性騷擾","騷擾","威脅","暴力","憂鬱","自殺","違法","吃案","職災","不給加班費","欠薪"];
+
+const EXAMPLES = [
+  "剛升主管，原本的同事不太服我",
+  "同事在背後說我壞話，主管好像信了",
+  "我的提案在會議上被否決，但我覺得是對的",
+  "部屬出包，客戶很生氣，我也被老闆罵",
+  "主管要我推動新流程，其他部門很反彈",
+  "專案快到截止日，團隊壓力很大"
+];
+
+const byId = Object.fromEntries(STORIES.map(s=>[s.id,s]));
+const $ = s=>document.querySelector(s);
+const esc = t=>String(t??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+/* ---------- 本機比對 ---------- */
+function analyse(q){
+  const text = q.toLowerCase();
+  const catScore = Object.fromEntries(CATS.map(c=>[c,0]));
+  for(const [c,words] of Object.entries(CAT_HINTS)) for(const w of words) if(text.includes(w)) catScore[c]+=1;
+  const scored = STORIES.map(s=>{
+    let sc=0; const hits=[];
+    for(const k of s.kw) if(text.includes(k.toLowerCase())){ sc+=2; hits.push(k); }
+    for(const c of s.cat) sc+=catScore[c]*0.6;
+    return {s,sc,hits};
+  }).filter(x=>x.hits.length>0).sort((a,b)=>b.sc-a.sc);
+  for(const x of scored) for(const c of x.s.cat) catScore[c]+=x.hits.length;
+  const topCats = CATS.filter(c=>catScore[c]>0).sort((a,b)=>catScore[b]-catScore[a]).slice(0,2);
+  const sensitive = SENSITIVE.some(w=>text.includes(w));
+  return {scored,topCats,sensitive};
+}
+
+function diagnosisText(topCats, main){
+  if(!topCats.length) return "從描述看不出明確的情境類型，下面先提供最接近的一則故事。補充「對象是誰、發生了什麼、你希望的結果」，比對會更準確。";
+  const head = `你的問題主要落在「${topCats[0]}」`+(topCats[1]?`，也牽涉「${topCats[1]}」`:"")+"。";
+  return head + `最能對照的是「${main.title}」：${main.lesson}`;
+}
+
+/* ---------- 渲染 ---------- */
+function storyBlock(s){
+  return `<div class="story">
+    <div class="src">資治通鑑・${esc(s.src)}</div>
+    <h3>${esc(s.title)}</h3>
+    <p>${esc(s.story)}</p>
+    <p class="quote">「${esc(s.quote.replace(/[「」]/g,""))}」</p>
+  </div>`;
+}
+function listBlock(items,cls){ return `<ul class="${cls}">${items.map(i=>`<li>${esc(i)}</li>`).join("")}</ul>`; }
+function relatedBlock(ids){
+  if(!ids.length) return "";
+  return `<div style="display:grid;gap:8px"><div class="label">也可以參考</div><div class="related">${
+    ids.map(id=>{const s=byId[id];return `<button class="rel" data-id="${s.id}"><b>${esc(s.title)}</b><span>${esc(s.lesson)}</span></button>`}).join("")
+  }</div></div>`;
+}
+const SENS_NOTE = "你描述的狀況可能涉及職場霸凌、騷擾、違法或身心健康。故事只能提供處世參考，請先保留紀錄（時間、對話、證據），並向人資、工會、勞工主管機關或專業諮詢管道求助。";
+
+function renderAnswer({mode,question,diag,main,bridge,actions,avoid,script,related,note}){
+  const r=$("#result");
+  r.innerHTML = `
+    <div class="status">
+      <span class="pill ${mode==="ai"?"ai":""}">${mode==="ai"?"Claude 深入分析":mode==="sample"?"範例":"錦囊比對"}</span>
+      ${question?`<span class="hint">問題：${esc(question.length>60?question.slice(0,60)+"…":question)}</span>`:""}
+    </div>
+    <div style="display:grid;gap:6px"><div class="label">情境判讀</div><p class="diag">${esc(diag)}</p></div>
+    ${note?`<div class="note">${esc(note)}</div>`:""}
+    ${storyBlock(main)}
+    ${bridge?`<p class="bridge"><b>對照你的處境：</b>${esc(bridge)}</p>`:""}
+    <div class="lesson"><b>啟示：</b>${esc(main.lesson)}</div>
+    <div class="cols">
+      <div><div class="label">建議這樣做</div>${listBlock(actions,"do")}</div>
+      <div><div class="label">避免</div>${listBlock(avoid,"dont")}</div>
+    </div>
+    <div style="display:grid;gap:6px"><div class="label">可以這樣說</div>
+      <div class="script"><p id="scriptText">「${esc(script)}」</p><button class="copy" id="copyBtn">複製</button></div></div>
+    ${relatedBlock(related)}`;
+}
+
+function localAnswer(question, mode="local"){
+  const {scored,topCats,sensitive}=analyse(question);
+  if(!scored.length) return fallbackAnswer(question,topCats,sensitive);
+  const main = scored[0].s;
+  const related = scored.slice(1,3).map(x=>x.s.id);
+  if(related.length<2){ for(const s of STORIES) if(related.length<2 && s.id!==main.id && !related.includes(s.id) && s.cat.some(c=>main.cat.includes(c))) related.push(s.id); }
+  renderAnswer({mode,question,diag:diagnosisText(topCats,main),main,bridge:"",
+    actions:main.actions,avoid:main.avoid,script:main.script,related,note:sensitive?SENS_NOTE:""});
+}
+
+function fallbackAnswer(question,topCats,sensitive){
+  const ids = topCats.length ? STORIES.filter(s=>s.cat.includes(topCats[0])).map(s=>s.id).slice(0,8)
+    : CATS.map(c=>STORIES.find(s=>s.cat[0]===c)).filter(Boolean).map(s=>s.id);
+  const diag = topCats.length
+    ? `看起來和「${topCats[0]}」有關，但描述還不夠具體。補充「對象是誰、發生什麼事、你希望的結果」，比對會更準確。先看看這類情境的故事：`
+    : "這句話裡沒有找到可以對應的情境。試著描述「對象是誰、發生什麼事、你希望的結果」，例如「同事把工作都丟給我」。也可以從下面挑一則故事：";
+  $("#result").innerHTML = `<div class="status"><span class="pill">錦囊比對</span>${question?`<span class="hint">問題：${esc(question.length>60?question.slice(0,60)+"…":question)}</span>`:""}</div>
+    <div style="display:grid;gap:6px"><div class="label">情境判讀</div><p class="diag">${esc(diag)}</p></div>
+    ${sensitive?`<div class="note">${esc(SENS_NOTE)}</div>`:""}
+    ${relatedBlock(ids).replace("也可以參考","從這幾則開始")}`;
+}
+
+function showStory(id){
+  const s=byId[id]; if(!s) return;
+  const related = STORIES.filter(x=>x.id!==id && x.cat.some(c=>s.cat.includes(c))).slice(0,2).map(x=>x.id);
+  renderAnswer({mode:"local",question:"",diag:`這則故事屬於「${s.cat.join("、")}」情境。`,main:s,bridge:"",
+    actions:s.actions,avoid:s.avoid,script:s.script,related,note:""});
+  $("#result").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- Claude 深入分析 ---------- */
+let sample=null, ctl=null;
+function buildPrompt(q){
+  const lib = STORIES.map(s=>`${s.id}｜${s.title}｜${s.cat.join("/")}｜${s.lesson}`).join("\n");
+  return `你是一位熟讀《資治通鑑》的資深職場顧問。使用者描述了一個職場人際問題，請從下方故事庫挑選最貼切的 1–2 則，給出具體、可執行、符合現代職場倫理的建議。用繁體中文，語氣專業、簡潔、溫和。
+
+故事庫（id｜標題｜類別｜啟示）：
+${lib}
+
+使用者的問題：
+"""${q.slice(0,2000)}"""
+
+只回覆一個 JSON 物件，格式：
+{"category":"從這些類別選 1–2 個：${CATS.join("、")}","situation":"兩句內的情境判讀，點出問題核心","story_ids":["主要故事id","次要故事id（可省略）"],"bridge":"2–3 句說明主要故事如何對應使用者處境","actions":["3–4 條具體行動，各 30 字內"],"avoid":["2 條應避免的做法"],"script":"一句使用者可以直接對當事人說的話","note":"若涉及霸凌、騷擾、違法或身心健康，提醒尋求人資或專業協助；否則空字串"}`;
+}
+async function askClaude(){
+  const q=$("#q").value.trim();
+  if(!q){ $("#q").focus(); return; }
+  ctl?.abort(); ctl=new AbortController();
+  const btn=$("#askAi"); btn.disabled=true; btn.textContent="分析中…";
+  $("#result").innerHTML=`<div class="status"><span class="pill ai">Claude 深入分析</span></div><p class="thinking">正在對照通鑑故事思考你的處境，約需數十秒……</p>`;
+  try{
+    const d = await sample.json(buildPrompt(q),{signal:ctl.signal});
+    const ids=(Array.isArray(d?.story_ids)?d.story_ids:[]).map(String).filter(id=>byId[id]);
+    if(!ids.length) throw {code:"invalid_json"};
+    const main=byId[ids[0]];
+    const arr=(v,fb)=>Array.isArray(v)&&v.length?v.map(String).slice(0,5):fb;
+    const local=analyse(q);
+    let related=ids.slice(1,2);
+    for(const x of local.scored) if(related.length<2 && x.s.id!==main.id && !related.includes(x.s.id)) related.push(x.s.id);
+    const cat = String(d.category||"").trim();
+    renderAnswer({mode:"ai",question:q,
+      diag:(cat?`【${cat}】`:"")+String(d.situation||main.lesson),
+      main,bridge:String(d.bridge||""),actions:arr(d.actions,main.actions),avoid:arr(d.avoid,main.avoid),
+      script:String(d.script||main.script),related,
+      note:String(d.note||"").trim() || (local.sensitive?SENS_NOTE:"")});
+  }catch(e){
+    if(e?.code==="cancelled") return;
+    if(["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed"].includes(e?.code)){
+      btn.hidden=true; $("#aiHint").textContent="Claude 分析在此檢視中無法使用，已改用錦囊比對。";
+    }
+    localAnswer(q);
+    const msg = e?.code==="rate_limited" ? "Claude 目前使用量已達上限，先提供錦囊比對結果，稍後可再試。"
+      : e?.code==="invalid_json" ? "Claude 的回覆格式無法讀取，先提供錦囊比對結果，可再按一次重試。"
+      : !btn.hidden ? "Claude 暫時無法回應，先提供錦囊比對結果。" : "";
+    if(msg){ const n=document.createElement("div"); n.className="note"; n.textContent=msg; $("#result").prepend(n); }
+  }finally{ btn.disabled=false; btn.textContent="請 Claude 深入分析"; }
+}
+
+/* ---------- 書架 ---------- */
+let activeCat="全部";
+function renderShelf(){
+  $("#filters").innerHTML=["全部",...CATS].map(c=>`<button class="chip" data-cat="${c}" aria-pressed="${c===activeCat}">${c}</button>`).join("");
+  const list=STORIES.filter(s=>activeCat==="全部"||s.cat.includes(activeCat));
+  $("#shelf").innerHTML=list.map(s=>`<details class="card">
+    <summary><div class="meta"><span class="src" style="font-size:12px">${esc(s.src)}</span>${s.cat.map(c=>`<span class="tag">${c}</span>`).join("")}</div>
+      <h3>${esc(s.title)}</h3><span class="hint" style="font-size:13.5px">${esc(s.lesson)}</span></summary>
+    <div class="body"><p>${esc(s.story)}</p>${listBlock(s.actions,"do")}
+      <button class="btn ghost" data-show="${s.id}" style="justify-self:start;padding:5px 12px;font-size:13px">帶到上方看完整建議</button></div>
+  </details>`).join("");
+}
+
+/* ---------- 事件 ---------- */
+$("#examples").innerHTML=EXAMPLES.map(e=>`<button class="chip" data-ex="${esc(e)}">${esc(e)}</button>`).join("");
+document.addEventListener("click",e=>{
+  const t=e.target.closest("button"); if(!t) return;
+  if(t.dataset.ex){ $("#q").value=t.dataset.ex; localAnswer(t.dataset.ex); }
+  else if(t.dataset.cat){ activeCat=t.dataset.cat; renderShelf(); }
+  else if(t.dataset.show){ showStory(t.dataset.show); }
+  else if(t.classList.contains("rel")){ showStory(t.dataset.id); }
+  else if(t.id==="copyBtn"){
+    const txt=$("#scriptText").textContent.replace(/^「|」$/g,"");
+    navigator.clipboard?.writeText(txt).then(()=>{t.textContent="已複製"},()=>{
+      const r=document.createRange(); r.selectNodeContents($("#scriptText")); const s=getSelection(); s.removeAllRanges(); s.addRange(r); t.textContent="已選取";
+    });
+  }
+});
+$("#ask").addEventListener("click",()=>{ const q=$("#q").value.trim(); if(!q){$("#q").focus();return;} localAnswer(q); });
+$("#askAi").addEventListener("click",askClaude);
+$("#q").addEventListener("keydown",e=>{ if(e.key==="Enter"&&(e.metaKey||e.ctrlKey)) $("#ask").click(); });
+
+/* 初始：範例情境，讓頁面一打開就看得到成果 */
+const SAMPLE_Q = EXAMPLES[0];
+$("#q").value = SAMPLE_Q;
+localAnswer(SAMPLE_Q,"sample");
+renderShelf();
+
+(async()=>{
+  try{
+    sample = window.claude?.use ? await window.claude.use("sample") : null;
+  }catch{ sample=null; }
+  if(sample){
+    $("#askAi").hidden=false;
+    $("#aiHint").textContent="「查錦囊」立即比對內建故事；「深入分析」由 Claude 依你的描述量身建議，會使用你的 Claude 額度。";
+  }
+})();
+</script>
+
+</body></html>
