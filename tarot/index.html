@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>星語塔羅</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#f6f1e7; --bg2:#ece3d1; --ink:#2b2340; --muted:#6b6280;
+  --gold:#a67c2e; --gold2:#d4b26a; --card:#2b2147; --card2:#463670;
+  --face:#fffaf0; --line:#d9ccb0; --accent:#7a3e9d; --rev:#b5473a;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#120e1f; --bg2:#1d1730; --ink:#efe8ff; --muted:#a89cc4;
+    --gold:#d4b26a; --gold2:#f0d798; --card:#2b2147; --card2:#4c3a7d;
+    --face:#1f1933; --line:#3a2f57; --accent:#c597ea; --rev:#e07a6c;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#120e1f; --bg2:#1d1730; --ink:#efe8ff; --muted:#a89cc4;
+  --gold:#d4b26a; --gold2:#f0d798; --card:#2b2147; --card2:#4c3a7d;
+  --face:#1f1933; --line:#3a2f57; --accent:#c597ea; --rev:#e07a6c;
+}
+body{background:radial-gradient(ellipse at top,var(--bg2),var(--bg) 70%) fixed;background-color:var(--bg);color:var(--ink);
+  font-family:"Noto Serif TC","PingFang TC","Microsoft JhengHei",serif;min-height:100vh;line-height:1.6}
+.wrap{max-width:980px;margin:0 auto;padding:24px 16px 64px}
+header{text-align:center;margin-bottom:20px}
+h1{font-size:2rem;letter-spacing:.3em;color:var(--gold)}
+.sub{color:var(--muted);font-size:.9rem}
+.panel{background:color-mix(in srgb,var(--face) 85%,transparent);border:1px solid var(--line);border-radius:14px;padding:18px;margin-bottom:18px}
+.step-title{font-size:1.05rem;color:var(--accent);margin-bottom:10px}
+input[type=text]{width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink);font:inherit}
+.spreads{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-top:12px}
+.spread{border:1px solid var(--line);border-radius:10px;padding:10px 12px;cursor:pointer;background:var(--bg)}
+.spread.on{border-color:var(--gold);box-shadow:0 0 0 2px var(--gold) inset}
+.spread b{display:block}.spread small{color:var(--muted)}
+.btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;justify-content:center}
+button{font:inherit;cursor:pointer;border-radius:999px;padding:9px 22px;border:1px solid var(--gold);background:var(--gold);color:#fff}
+button.ghost{background:transparent;color:var(--gold)}
+button:disabled{opacity:.4;cursor:not-allowed}
+.hint{text-align:center;color:var(--muted);font-size:.9rem;margin-top:6px}
+/* deck fan */
+.fan{display:flex;flex-wrap:wrap;justify-content:center;gap:6px;padding:8px 0}
+.back{width:44px;height:74px;border-radius:6px;cursor:pointer;transition:transform .2s,opacity .3s;
+  background:repeating-linear-gradient(45deg,var(--card) 0 6px,var(--card2) 6px 12px);border:2px solid var(--gold2);position:relative}
+.back::after{content:"✦";position:absolute;inset:0;display:grid;place-items:center;color:var(--gold2);font-size:14px}
+.back:hover{transform:translateY(-8px)}
+.back.taken{opacity:.15;pointer-events:none}
+.shuffling .back{animation:shuf .5s ease-in-out infinite alternate}
+@keyframes shuf{to{transform:translateY(-6px) rotate(6deg)}}
+/* table */
+.table{display:grid;gap:16px;justify-content:center;margin:10px 0}
+.slot{display:flex;flex-direction:column;align-items:center;gap:6px}
+.slot .pos{font-size:.85rem;color:var(--muted)}
+.tcard{width:130px;height:216px;perspective:900px;cursor:pointer}
+.inner{width:100%;height:100%;position:relative;transition:transform .8s;transform-style:preserve-3d}
+.tcard.flipped .inner{transform:rotateY(180deg)}
+.side{position:absolute;inset:0;border-radius:10px;backface-visibility:hidden;border:2px solid var(--gold2)}
+.side.b{background:repeating-linear-gradient(45deg,var(--card) 0 8px,var(--card2) 8px 16px);display:grid;place-items:center;color:var(--gold2);font-size:28px}
+.side.f{transform:rotateY(180deg);background:linear-gradient(160deg,var(--face),var(--bg2));display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:10px 6px;text-align:center}
+.side.f .num{color:var(--gold);font-size:.85rem;letter-spacing:.1em}
+.side.f .sym{font-size:46px;line-height:1}
+.side.f .nm{font-weight:700}.side.f .en{font-size:.7rem;color:var(--muted)}
+.tcard.rev .side.f .art{transform:rotate(180deg)}
+.art{display:flex;flex-direction:column;align-items:center;gap:6px}
+.tag{font-size:.75rem;padding:1px 8px;border-radius:999px;border:1px solid}
+.tag.up{color:var(--accent);border-color:var(--accent)}.tag.dn{color:var(--rev);border-color:var(--rev)}
+/* readings */
+.reading{border-left:3px solid var(--gold);padding:6px 12px;margin:10px 0}
+.reading h3{font-size:1rem}.reading .kw{color:var(--muted);font-size:.85rem}
+.summary{background:var(--bg);border-radius:10px;padding:12px;margin-top:10px}
+.hist li{list-style:none;border-bottom:1px dashed var(--line);padding:6px 0;font-size:.9rem}
+.hist .d{color:var(--muted);font-size:.8rem}
+.hidden{display:none}
+.theme{position:fixed;top:10px;right:10px;padding:4px 10px;font-size:.8rem}
+@media (max-width:520px){.tcard{width:96px;height:160px}.side.f .sym{font-size:32px}.side.f .nm{font-size:.85rem}.back{width:34px;height:58px}h1{font-size:1.5rem}}
+</style>
+</head>
+<body>
+<button class="ghost theme" id="themeBtn" aria-label="切換主題">◐</button>
+<div class="wrap">
+  <header>
+    <h1>星語塔羅</h1>
+    <p class="sub">靜心 · 提問 · 抽牌 · 解讀 —— 22 張大阿爾克那</p>
+  </header>
+
+  <!-- Step 1 -->
+  <section class="panel" id="s1">
+    <div class="step-title">① 寫下你的問題</div>
+    <input type="text" id="q" maxlength="80" placeholder="例:接下來三個月,我的工作方向該如何調整?">
+    <div class="step-title" style="margin-top:16px">② 選擇牌陣</div>
+    <div class="spreads" id="spreads"></div>
+    <div class="btns"><button id="startBtn">開始洗牌</button></div>
+  </section>
+
+  <!-- Step 2 -->
+  <section class="panel hidden" id="s2">
+    <div class="step-title">③ 憑直覺抽出 <span id="needN"></span> 張牌</div>
+    <div class="fan" id="fan"></div>
+    <p class="hint" id="pickHint"></p>
+  </section>
+
+  <!-- Step 3 -->
+  <section class="panel hidden" id="s3">
+    <div class="step-title">④ 點擊牌面翻牌</div>
+    <div class="table" id="table"></div>
+    <div class="btns"><button class="ghost" id="flipAll">全部翻開</button></div>
+    <div id="readings"></div>
+    <div class="btns"><button id="againBtn" class="hidden">再抽一次</button></div>
+  </section>
+
+  <section class="panel">
+    <div class="step-title">抽牌紀錄(僅存於本機瀏覽器)</div>
+    <ul class="hist" id="hist"></ul>
+    <div class="btns"><button class="ghost" id="clearHist">清除紀錄</button></div>
+  </section>
+  <p class="hint">塔羅僅供娛樂與自我反思參考,重大決定請依實際情況審慎判斷。</p>
+</div>
+
+<script>
+const CARDS=[
+ ["0","愚者","The Fool","✧","新開始、冒險、自由、純真","魯莽、猶豫不決、輕率冒險","放下顧慮,勇敢踏出第一步,新旅程正在召喚你。","衝動可能帶來風險,行動前先看清腳下的路。"],
+ ["I","魔術師","The Magician","∞","創造力、意志、資源整合、行動","操弄、欺騙、能力未發揮","你已擁有所需的工具與能力,是付諸行動的時候。","小心空有計畫卻未執行,或被表象誤導。"],
+ ["II","女祭司","The High Priestess","☾","直覺、潛意識、智慧、靜觀","忽視直覺、秘密、表面化","答案在你內心,靜下來傾聽直覺。","資訊不完整或有所隱瞞,勿急於判斷。"],
+ ["III","皇后","The Empress","♀","豐盛、滋養、美感、創造","依賴、停滯、過度付出","照顧好自己與周遭,豐收正在孕育。","付出失衡或缺乏自我照顧,需重新調整。"],
+ ["IV","皇帝","The Emperor","♔","權威、結構、穩定、領導","專制、僵化、失控","建立規則與秩序,以理性與紀律掌握局面。","過度控制或缺乏架構,需檢視權力關係。"],
+ ["V","教皇","The Hierophant","⚜","傳統、制度、指導、信念","叛逆、打破常規、教條","向有經驗的前輩或既有體制尋求指引。","既有框架可能不再適用,嘗試新方法。"],
+ ["VI","戀人","The Lovers","♡","愛情、選擇、和諧、價值一致","失衡、錯誤選擇、價值衝突","面對重要選擇,依循內心真正的價值。","關係或決策出現分歧,需坦誠溝通。"],
+ ["VII","戰車","The Chariot","⛭","意志、勝利、前進、自律","失去方向、衝突、受阻","集中意志、掌握方向,勝利屬於堅持的人。","力量分散或方向不明,先整合目標再前進。"],
+ ["VIII","力量","Strength","♌","勇氣、耐心、溫柔的力量","自我懷疑、軟弱、失控","以柔克剛,用耐心與同理化解困難。","信心不足或情緒失控,先安頓自己。"],
+ ["IX","隱者","The Hermit","☉","內省、獨處、尋求真理","孤立、逃避、封閉","暫時退一步,透過獨處找到答案。","過度封閉自己,適時向外求助。"],
+ ["X","命運之輪","Wheel of Fortune","☸","轉機、循環、命運、機會","逆運、抗拒改變、停滯","局勢正在轉動,把握出現的機會。","暫時低潮,接受變化,運勢終將循環。"],
+ ["XI","正義","Justice","⚖","公平、真相、因果、決斷","不公、偏頗、逃避責任","以客觀公正的態度做決定,種什麼因得什麼果。","判斷可能失準,檢視是否有偏見或疏漏。"],
+ ["XII","吊人","The Hanged Man","⟁","暫停、換位思考、犧牲","拖延、無謂犧牲、僵持","換個角度看事情,暫停反而帶來突破。","陷入僵局卻不願改變,需果斷放手。"],
+ ["XIII","死神","Death","✠","結束、轉化、重生","抗拒結束、停滯不前","舊的階段結束,為新的開始騰出空間。","執著於過去,阻礙了必要的轉變。"],
+ ["XIV","節制","Temperance","⚱","平衡、調和、耐心、中庸","失衡、過度、急躁","循序漸進,在各方之間取得平衡。","步調失衡,需調整生活與情緒的比例。"],
+ ["XV","惡魔","The Devil","♆","慾望、束縛、執著、誘惑","解脫、覺醒、擺脫束縛","覺察讓你受困的習慣或關係。","正在掙脫束縛,重新奪回主導權。"],
+ ["XVI","高塔","The Tower","⚡","突變、崩解、覺醒","避免災難、延遲的改變","突如其來的變動將打破假象,重建更穩固的基礎。","危機尚可避免,但改變遲早要面對。"],
+ ["XVII","星星","The Star","★","希望、療癒、靈感、信心","失望、缺乏信心、迷惘","風暴後的希望,保持信念,療癒正在發生。","暫時失去方向,重新連結內在的光。"],
+ ["XVIII","月亮","The Moon","☽","不安、幻象、潛意識、迷惑","真相浮現、走出迷霧","前路不明,留意恐懼與錯覺,勿輕信表象。","迷霧逐漸散去,真相即將明朗。"],
+ ["XIX","太陽","The Sun","☀","成功、喜悅、活力、明朗","延遲的成功、過度樂觀","光明順遂,自信展現自己,成果即將到來。","好事會來但稍有延遲,保持務實樂觀。"],
+ ["XX","審判","Judgement","♫","覺醒、評價、重生、召喚","自我懷疑、逃避檢討","回顧過往、做出總結,迎接新的使命。","對自己過於苛責,或不願面對該做的決定。"],
+ ["XXI","世界","The World","◎","完成、圓滿、整合、成就","未完成、缺少收尾","一個循環圓滿完成,享受成果並準備下一段旅程。","尚差臨門一腳,把未完成的事收尾。"]
+];
+const SPREADS=[
+ {id:"one",name:"單張指引",desc:"快速回答今日或單一問題",pos:["指引"],cols:1},
+ {id:"three",name:"時間之流",desc:"過去 · 現在 · 未來",pos:["過去","現在","未來"],cols:3},
+ {id:"choice",name:"二擇一",desc:"現況 · 選項A · 選項B",pos:["現況","選項 A","選項 B"],cols:3},
+ {id:"five",name:"十字牌陣",desc:"現況 · 阻礙 · 根源 · 建議 · 結果",pos:["現況","阻礙","根源","建議","結果"],cols:5}
+];
+const $=s=>document.querySelector(s);
+let spread=SPREADS[1],deck=[],picks=[];
+
+// theme toggle
+$("#themeBtn").onclick=()=>{const r=document.documentElement;const dark=r.dataset.theme?r.dataset.theme==="dark":matchMedia("(prefers-color-scheme: dark)").matches;r.dataset.theme=dark?"light":"dark"};
+
+// spreads
+$("#spreads").innerHTML=SPREADS.map(s=>`<div class="spread${s===spread?" on":""}" data-id="${s.id}"><b>${s.name}(${s.pos.length} 張)</b><small>${s.desc}</small></div>`).join("");
+$("#spreads").onclick=e=>{const el=e.target.closest(".spread");if(!el)return;spread=SPREADS.find(s=>s.id===el.dataset.id);document.querySelectorAll(".spread").forEach(x=>x.classList.toggle("on",x===el))};
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+
+$("#startBtn").onclick=()=>{
+  deck=shuffle(CARDS.map((c,i)=>({i,rev:Math.random()<.35})));picks=[];
+  $("#s3").classList.add("hidden");$("#s2").classList.remove("hidden");
+  $("#needN").textContent=spread.pos.length;
+  const fan=$("#fan");fan.innerHTML=deck.map((_,k)=>`<div class="back" data-k="${k}"></div>`).join("");
+  fan.classList.add("shuffling");$("#pickHint").textContent="洗牌中……請專注在你的問題上";
+  setTimeout(()=>{fan.classList.remove("shuffling");updateHint()},1400);
+  $("#s2").scrollIntoView({behavior:"smooth"});
+};
+function updateHint(){$("#pickHint").textContent=`已抽 ${picks.length} / ${spread.pos.length} 張`}
+$("#fan").onclick=e=>{
+  const el=e.target.closest(".back");if(!el||$("#fan").classList.contains("shuffling"))return;
+  if(picks.length>=spread.pos.length)return;
+  el.classList.add("taken");picks.push(deck[+el.dataset.k]);updateHint();
+  if(picks.length===spread.pos.length)setTimeout(layTable,500);
+};
+
+function layTable(){
+  $("#s3").classList.remove("hidden");$("#readings").innerHTML="";$("#againBtn").classList.add("hidden");
+  const t=$("#table");t.style.gridTemplateColumns=`repeat(${Math.min(spread.cols,window.innerWidth<520?3:5)},auto)`;
+  t.innerHTML=picks.map((p,k)=>{const c=CARDS[p.i];return `<div class="slot"><span class="pos">${spread.pos[k]}</span>
+   <div class="tcard${p.rev?" rev":""}" data-k="${k}"><div class="inner"><div class="side b">✦</div>
+   <div class="side f"><span class="num">${c[0]}</span><div class="art"><span class="sym">${c[3]}</span></div>
+   <div><div class="nm">${c[1]}</div><div class="en">${c[2]}</div></div>
+   <span class="tag ${p.rev?"dn":"up"}">${p.rev?"逆位":"正位"}</span></div></div></div></div>`}).join("");
+  $("#s3").scrollIntoView({behavior:"smooth"});
+}
+function flip(el){if(el.classList.contains("flipped"))return;el.classList.add("flipped");
+  if(document.querySelectorAll(".tcard.flipped").length===picks.length)setTimeout(showReading,800)}
+$("#table").onclick=e=>{const el=e.target.closest(".tcard");if(el)flip(el)};
+$("#flipAll").onclick=()=>document.querySelectorAll(".tcard").forEach((el,k)=>setTimeout(()=>flip(el),k*250));
+
+function showReading(){
+  if($("#readings").innerHTML)return;
+  const q=$("#q").value.trim();
+  let html=`<div class="step-title" style="margin-top:12px">⑤ 牌意解讀${q?`:「${esc(q)}」`:""}</div>`;
+  picks.forEach((p,k)=>{const c=CARDS[p.i];html+=`<div class="reading"><h3>【${spread.pos[k]}】${c[1]} · ${p.rev?"逆位":"正位"}</h3>
+   <div class="kw">關鍵字:${p.rev?c[5]:c[4]}</div><p>${p.rev?c[7]:c[6]}</p></div>`});
+  // summary
+  const up=picks.filter(p=>!p.rev).length,major=picks.filter(p=>[0,10,13,16,21].includes(p.i)).length;
+  let tone=up/picks.length>=.67?"整體能量偏向順流,適合積極行動。":up/picks.length>=.34?"順逆交錯,宜審慎評估、穩步前進。":"多數牌呈逆位,建議先處理內在阻礙,再求外在突破。";
+  if(major)tone+=" 出現轉折型關鍵牌,代表事情正處於重要轉換期。";
+  const last=CARDS[picks[picks.length-1].i];
+  html+=`<div class="summary"><b>綜合分析</b><br>正位 ${up} 張、逆位 ${picks.length-up} 張。${tone}<br>關鍵提醒:以「${last[1]}」作為行動主軸 —— ${picks[picks.length-1].rev?last[7]:last[6]}</div>`;
+  $("#readings").innerHTML=html;$("#againBtn").classList.remove("hidden");
+  saveHist(q);
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]))}
+
+// history (per-viewer convenience only)
+const KEY="tarot-history";
+function loadHist(){try{return JSON.parse(localStorage.getItem(KEY))||[]}catch{return[]}}
+function saveHist(q){const h=loadHist();h.unshift({d:new Date().toLocaleString("zh-TW"),q,s:spread.name,c:picks.map(p=>CARDS[p.i][1]+(p.rev?"(逆)":""))});
+  try{localStorage.setItem(KEY,JSON.stringify(h.slice(0,20)))}catch{}renderHist()}
+function renderHist(){const h=loadHist();$("#hist").innerHTML=h.length?h.map(x=>`<li><span class="d">${x.d} · ${x.s}</span><br>${x.q?esc(x.q)+" → ":""}${x.c.join("、")}</li>`).join(""):'<li class="d">尚無紀錄</li>'}
+$("#clearHist").onclick=()=>{try{localStorage.removeItem(KEY)}catch{}renderHist()};
+$("#againBtn").onclick=()=>{$("#s2").classList.add("hidden");$("#s3").classList.add("hidden");$("#s1").scrollIntoView({behavior:"smooth"})};
+renderHist();
+</script>
+</body>
+</html>
